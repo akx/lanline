@@ -43,7 +43,7 @@ namespace Lanline
 				Logging.Log("Server has already been started, will not restart.");
 				return;
 			}
-			listener = new TcpListener(IPAddress.Any, 1900);
+			listener = new TcpListener(IPAddress.Any, NetworkManager.LANLINE_PORT);
 			listener.Start(); 
 			listenerWorker = new BackgroundWorker();
 			listenerWorker.DoWork += new DoWorkEventHandler(listenerWorker_DoWork);

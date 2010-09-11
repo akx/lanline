@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Lanline
 {
@@ -50,7 +51,10 @@ namespace Lanline
 				stream.WriteUTF8("HTTP/1.0 400 Error\r\nContent-type:text/plain\r\n\r\nNot supported");
 				return;
 			}
+			string path = Uri.UnescapeDataString(parts[1]);// new Uri("http://localhost" + parts[1], true).AbsolutePath;
+			//string path = Uri.UnescapeDataString(parts[1]);
 			// Pretend we're interested in HTTP headers
+			Logging.Log("Path: " + path);
 			while(true) {
 				string line = sr.ReadLine();
 				Logging.Log("  Header: {0}", line.Trim());
@@ -58,7 +62,7 @@ namespace Lanline
 			}
 			
 			try {
-				InnerHandleHTTPRequest(parts[1]);
+				InnerHandleHTTPRequest(path);
 			} catch(Exception exc) {
 				Logging.Log("Exception while handling HTTP request: {0}", exc.ToString());
 			}
@@ -71,11 +75,20 @@ namespace Lanline
 			if(path == "/filelist") {
 				string[] fileList = ShareManager.Instance.GetFullVFileList();
 				byte[] buf = Encoding.UTF8.GetBytes(String.Join("\r\n", fileList));
+				
 				stream.WriteHTTPResponseHeader(200, "text/plain", buf.Length);
         		client.WriteStreamAsHTTPContent(new MemoryStream(buf));
 
-			} else if(path == "/ver") {
-				stream.WriteSimpleHTTPResponse(200, "text/plain", "1");
+			} else if(path == "/info") {
+				string name = "(unnamed)";
+				try {
+					name = System.Environment.MachineName;
+				} catch(Exception) {
+					
+				}
+				string version = Application.ProductVersion;
+				string resp = String.Format("version:{0}\nfiles:{1}\nname:{2}", version, ShareManager.Instance.TotalFiles, name);
+				stream.WriteSimpleHTTPResponse(200, "text/plain", resp);
 			} else if(path.StartsWith("/f/")) {
 				ShareFileInfo sfi = ShareManager.Instance.ResolveVPath(path.Substring(3));
 				if(sfi == null) {

@@ -46,8 +46,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrowserManager.cs" />
+    <Compile Include="BrowserWindow.cs" />
+    <Compile Include="BrowserWindow.Designer.cs">
+      <DependentUpon>BrowserWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConnectionHandler.cs" />
     <Compile Include="Host.cs" />
+    <Compile Include="IncomingTransfer.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="MainForm.Designer.cs">
@@ -72,6 +78,9 @@
     <Compile Include="StreamXtns.cs" />
     <Compile Include="Transfer.cs" />
     <Compile Include="XferManager.cs" />
+    <EmbeddedResource Include="BrowserWindow.resx">
+      <DependentUpon>BrowserWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
