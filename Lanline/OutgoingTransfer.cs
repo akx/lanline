@@ -20,7 +20,7 @@ namespace Lanline
 		{
 			direction = TransferDirection.OUTGOING;
 			this.ch = ch;
-			this.host = ch.Client.Client.RemoteEndPoint.ToString();
+			this.hostName = ch.Client.Client.RemoteEndPoint.ToString();
 			this.file1 = sfi.relativeVPath;
 			this.file2 = "(remote)";
 		}

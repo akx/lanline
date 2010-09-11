@@ -96,16 +96,18 @@ namespace Lanline
 				return;
 			}
 			DirectoryInfo di = directoryQueue.Dequeue();
-			foreach(FileInfo fi in di.GetFiles()) {
-				
-				if((fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden) continue;
-				if((fi.Attributes & FileAttributes.System) == FileAttributes.System) continue;
-				if(fi.FullName.IndexOf('$') > -1) continue;
-				string relVpath = Path.GetFullPath(fi.FullName).Replace(fsPath, "");
-				files.Add(new ShareFileInfo(fi.FullName, relVpath, fi.Length));
-			}
-			foreach(DirectoryInfo sdi in di.GetDirectories()) {
-				directoryQueue.Enqueue(sdi);
+			lock(this) {
+				foreach(FileInfo fi in di.GetFiles()) {
+					
+					if((fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden) continue;
+					if((fi.Attributes & FileAttributes.System) == FileAttributes.System) continue;
+					if(fi.FullName.IndexOf('$') > -1) continue;
+					string relVpath = Path.GetFullPath(fi.FullName).Replace(fsPath, "").Trim('\\');
+					files.Add(new ShareFileInfo(fi.FullName, relVpath, fi.Length));
+				}
+				foreach(DirectoryInfo sdi in di.GetDirectories()) {
+					directoryQueue.Enqueue(sdi);
+				}
 			}
 		}
 		

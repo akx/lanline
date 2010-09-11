@@ -32,13 +32,16 @@ namespace Lanline
 					
 				}
 			};
-			ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
-			ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
+			//ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
+			//ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
 			SharingServer.Instance.Start();
+			//NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
 			
-			RefreshSharesList();
 			DoRefreshShares();
+			RefreshSharesList();			
 			RefreshXfersList();
+			RefreshHostsList();
+			
 		}
 		
 		
@@ -109,11 +112,13 @@ namespace Lanline
 			xfersList.BeginUpdate();
 			foreach(Transfer tr in XferManager.Instance.EnumerateTransfers()) {
 				ListViewItem lvi = new ListViewItem(new string[] {
-				   (tr.Direction == TransferDirection.OUTGOING ? "^" : "V") + " " + tr.Host,
+				   (tr.Direction == TransferDirection.OUTGOING ? "^" : "V") + " " + tr.HostName,
 				   tr.File1,
 				   (tr.HasCompleted ? "Done" : tr.Progress.ToString()),
-				   "|".Repeat(tr.Progress / 10).PadLeft(10, '.')
+				   "|".Repeat((int)(tr.Progress / (100 / 20.0))).PadLeft(20, '.')
 		        });
+				lvi.Tag = tr;
+				xfersList.Items.Add(lvi);
 			}
 			xfersList.EndUpdate();
 		}
@@ -139,6 +144,94 @@ namespace Lanline
 					RefreshSharesList();
 				}
 			}
+		}
+		
+		void RefreshHostsList() {
+			hostsList.Items.Clear();
+			hostsList.BeginUpdate();
+			foreach(Host h in NetworkManager.Instance.EnumerateKnownHosts()) {
+				ListViewItem lvi = new ListViewItem(new string[] {
+				   h.Ip,
+				   h.Name,
+				   h.NFiles.ToString(),
+				   h.ClientVersion,
+				   (h.HasFileList ? "Yes" : "No")
+		        });
+				lvi.Tag = h;
+				hostsList.Items.Add(lvi);
+			}
+			hostsList.EndUpdate();
+			hostsList.AutoResizeColumns((hostsList.Items.Count > 0 ? ColumnHeaderAutoResizeStyle.ColumnContent : ColumnHeaderAutoResizeStyle.HeaderSize));
+		}
+		
+		void ReverifyHostsBtnClick(object sender, EventArgs e)
+		{
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.WorkerReportsProgress = true;
+			bw.WorkerSupportsCancellation = true;
+			bw.DoWork += delegate(object senderBw, DoWorkEventArgs ev) {
+				int i = 0;
+				int n = NetworkManager.Instance.NHosts;
+				foreach(Host h in NetworkManager.Instance.EnumerateKnownHosts()) {
+					if((senderBw as BackgroundWorker).CancellationPending) break;
+					h.Verify();
+					i++;
+					(senderBw as BackgroundWorker).ReportProgress((int)((i / (float)n) * 100));
+				}
+			};
+			bw.RunWorkerCompleted += delegate(object senderBw, RunWorkerCompletedEventArgs ev) { 
+				BeginInvoke(new MethodInvoker(delegate{RefreshHostsList();}));	
+			};
+			(new ProgressWindow("Reverifying hosts...", bw)).Show();
+			bw.RunWorkerAsync();
+		}
+		
+		void AddHostBtnClick(object sender, EventArgs e)
+		{
+			
+			string ip = PromptWindow.Prompt("Add Host", "Enter host IP address:", "");
+			if(ip == null) return;
+			bool ok = false;
+			while(!ok) {
+				ok = NetworkManager.Instance.AddHost(ip, NetworkManager.LANLINE_PORT, true);
+				if(!ok) {
+					if(MessageBox.Show(
+						"Could not verify that the host is alive.\n" + 
+						"Are you sure Lanline is running on it?\n\n" +
+						"Try the same host again?", "Oops.", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) != 
+						DialogResult.Yes
+					) {
+						break;
+					}
+				}
+			}
+			RefreshHostsList();
+		}
+		
+		private Host GetListSelectedHost() {
+			return (hostsList.SelectedItems.Count > 0 ? (hostsList.SelectedItems[0]).Tag as Host : null);
+		}
+		
+		void ForgetHostToolStripMenuItemClick(object sender, EventArgs e)
+		{
+			Host selectedHost = GetListSelectedHost();
+			Debug.Print(selectedHost.ToString());
+			NetworkManager.Instance.RemoveKnownHost(selectedHost);
+			RefreshHostsList();
+		}
+		
+		
+		void HostsListDoubleClick(object sender, EventArgs e)
+		{
+			Host selectedHost = GetListSelectedHost();
+			if(selectedHost != null) {
+				BrowserManager.Instance.Open(selectedHost);
+			}
+		}
+		
+		void XferUpdateTimerTick(object sender, EventArgs e)
+		{
+			if(tabControl1.SelectedTab == xfersTab) RefreshXfersList();
 		}
 	}
 }

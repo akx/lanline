@@ -23,10 +23,11 @@ namespace Lanline
 		{
 			InitializeComponent();
 			this.worker = worker;
-			Text = title;
+			Text = label1.Text = title;
 			progressBar1.Minimum = 0;
 			progressBar1.Maximum = 100;
 			CancelBtn.Enabled = worker.WorkerSupportsCancellation;
+			progressBar1.Style = (worker.WorkerReportsProgress ? ProgressBarStyle.Continuous : ProgressBarStyle.Marquee);
 			worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
 			worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 		}

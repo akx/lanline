@@ -122,19 +122,25 @@ namespace Lanline
 		public string[] GetFullVFileList() {
 			List<string> files = new List<string>();
 			foreach(SharePath sp in shares) {
-				foreach(ShareFileInfo sfi in sp.EnumerateFiles()) {
-					files.Add(sp.VPath + "\\" + sfi.relativeVPath + "$" + sfi.size.ToString(CultureInfo.InvariantCulture));
+				lock(sp) {
+					foreach(ShareFileInfo sfi in sp.EnumerateFiles()) {
+						files.Add(sp.VPath + "\\" + sfi.relativeVPath + "$" + sfi.size.ToString(CultureInfo.InvariantCulture));
+					}
 				}
 			}
 			return files.ToArray();
 		}
 		
 		public ShareFileInfo ResolveVPath(string vPath) {
+			System.Diagnostics.Debug.Print("Resolving vpath for " + vPath);
 			string[] vPathParts = vPath.Split(new char[]{'/'}, 2);
+			string vRoot = vPathParts[0];
+			string relPath = vPathParts[1].Replace("/", "\\");
 			foreach(SharePath sp in shares) {
-				if(sp.VPath == vPathParts[0]) { // find vpath root {
+				if(sp.VPath == vRoot) { // find vpath root {
+					System.Diagnostics.Debug.Print("vroot found, looking for relpath {0}", relPath);//Resolving vpath for " + vPath);
 					foreach(ShareFileInfo sfi in sp.EnumerateFiles()) {
-						if(sfi.relativeVPath == vPathParts[1]) return sfi;
+						if(sfi.relativeVPath == relPath) return sfi;
 					}
 				}
 			}

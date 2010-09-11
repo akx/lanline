@@ -79,8 +79,10 @@ namespace Lanline
 			// 
 			// PromptWindow
 			// 
+			this.AcceptButton = this.okBtn;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this.cancelBtn;
 			this.ClientSize = new System.Drawing.Size(366, 162);
 			this.ControlBox = false;
 			this.Controls.Add(this.cancelBtn);
