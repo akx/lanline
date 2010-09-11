@@ -57,6 +57,7 @@ namespace Lanline
 						//System.Diagnostics.Debug.Print("Creating new node for path " + path);
 						currentNode = new TreeNode(parts[i]);
 						currentNode.Tag = path;
+						currentNode.ContextMenuStrip = treeContextMenu;
 						nodeCache[path] = currentNode;
 					}
 					if(i == 0) roots.Add(currentNode);
@@ -78,6 +79,7 @@ namespace Lanline
 				nodeCache[selectedNodePath].EnsureVisible();
 				treeView1.SelectedNode = nodeCache[selectedNodePath];
 			}
+			statusLabel.Text = String.Format("{0} directories, {1} files", nodeCache.Count, host.FileList.Length);
 		}
 		
 		void RefreshFileListBtnClick(object sender, EventArgs e)
@@ -129,13 +131,43 @@ namespace Lanline
 				selectedItem = (sender as ListView).SelectedItems[0];
 			}
 			if(selectedItem != null) {
-				string localDir = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+				string localDir = SettingsManager.Instance.DefaultDownloadFolder;
 				string remotePath = selectedItem.Tag as string;
 				string localPath = Path.Combine(localDir, Path.GetFileName(remotePath));
-				if(MessageBox.Show("Download", "Download to " + localPath + "?", MessageBoxButtons.YesNo) == DialogResult.Yes) {
-					IncomingTransfer it = new IncomingTransfer(host, remotePath, localPath);
-					XferManager.Instance.Track(it);
-					it.Start();
+				if(MessageBox.Show("Download to " + localPath + "?", "Download", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+					XferManager.Instance.Track(new IncomingTransfer(host, remotePath, localPath));
+				}
+			}
+		}
+		
+		void DownloadEntireFolderToolStripMenuItemClick(object sender, EventArgs e)
+		{
+			TreeNode node = treeView1.SelectedNode;
+			string rootPath = node.Tag as string;
+			int lastSlash = rootPath.LastIndexOf('\\');
+			string rootPathLastPart = (lastSlash == -1 ? rootPath : rootPath.Substring(lastSlash)).Trim('\\');
+			List<string> files = new List<string>();
+			long totalSize = 0;
+			foreach(string path in host.FileList) {
+				if(path.StartsWith(rootPath)) {
+					string[] parts = path.Split('$');
+					files.Add(parts[0]);
+					totalSize += (Convert.ToInt64(parts[1]));
+				}
+			}
+			string msg = String.Format("You are about to download {0} files, totalling {1} MiB of data.\nContinue?", files.Count, Math.Round(totalSize / 1024 / 1024.0f, 2));
+			if(MessageBox.Show(msg, "Mass Download", MessageBoxButtons.YesNo) == DialogResult.Yes) {
+				FolderBrowserDialog fbd = new FolderBrowserDialog();
+				fbd.SelectedPath = SettingsManager.Instance.DefaultDownloadFolder;
+				fbd.ShowNewFolderButton = true;
+				fbd.Description = "Select a folder to save the downloaded folder in.";
+				if(fbd.ShowDialog() == DialogResult.OK) {
+					foreach(string remotePath in files) {
+						string relPath = Path.Combine(rootPathLastPart, remotePath.Substring(rootPath.Length + 1));
+						string localPath = Path.Combine(fbd.SelectedPath, relPath);
+						System.Diagnostics.Debug.Print(localPath);
+						XferManager.Instance.Track(new IncomingTransfer(host, remotePath, localPath));
+					}
 				}
 			}
 		}

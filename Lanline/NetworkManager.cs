@@ -40,7 +40,7 @@ namespace Lanline
 				if(!h.Verified) return null;
 			}
 			knownHosts.Add(h);
-			StatusManager.Instance.RaiseFlag(StatusFlag.NETWORK_CHANGED);
+			StatusManager.Instance.RaiseFlag(StatusFlag.NetworkChanged);
 			return h;
 		}
 		
@@ -54,7 +54,7 @@ namespace Lanline
 		public void RemoveKnownHost(Host h) {
 			if(knownHosts.Contains(h)) {
 				knownHosts.Remove(h);
-				StatusManager.Instance.RaiseFlag(StatusFlag.NETWORK_CHANGED);
+				StatusManager.Instance.RaiseFlag(StatusFlag.NetworkChanged);
 			}
 		}
 		

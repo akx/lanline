@@ -36,6 +36,7 @@ namespace Lanline
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.ColumnHeader columnHeader1;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BrowserWindow));
 			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -46,12 +47,15 @@ namespace Lanline
 			this.treeView1 = new System.Windows.Forms.TreeView();
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+			this.treeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.downloadEntireFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.toolStrip1.SuspendLayout();
 			this.statusStrip1.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
+			this.treeContextMenu.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// columnHeader1
@@ -143,6 +147,20 @@ namespace Lanline
 			this.columnHeader2.Text = "Size (MiB)";
 			this.columnHeader2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// treeContextMenu
+			// 
+			this.treeContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+									this.downloadEntireFolderToolStripMenuItem});
+			this.treeContextMenu.Name = "treeContextMenu";
+			this.treeContextMenu.Size = new System.Drawing.Size(196, 48);
+			// 
+			// downloadEntireFolderToolStripMenuItem
+			// 
+			this.downloadEntireFolderToolStripMenuItem.Name = "downloadEntireFolderToolStripMenuItem";
+			this.downloadEntireFolderToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+			this.downloadEntireFolderToolStripMenuItem.Text = "Download Entire Folder";
+			this.downloadEntireFolderToolStripMenuItem.Click += new System.EventHandler(this.DownloadEntireFolderToolStripMenuItemClick);
+			// 
 			// BrowserWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -160,9 +178,12 @@ namespace Lanline
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);
+			this.treeContextMenu.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.ToolStripMenuItem downloadEntireFolderToolStripMenuItem;
+		private System.Windows.Forms.ContextMenuStrip treeContextMenu;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ListView listView1;
 		private System.Windows.Forms.SplitContainer splitContainer1;
