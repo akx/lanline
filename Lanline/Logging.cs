@@ -25,5 +25,10 @@ namespace Lanline
 				OnMessageLogged(msg);
 			}
 		}
+		
+		public static void Debug(string fmt, params object[] args) {
+			string msg = String.Format(fmt, args);
+			System.Diagnostics.Debug.Print("Debug: " + msg);
+		}
 	}
 }

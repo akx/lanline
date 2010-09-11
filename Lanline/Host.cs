@@ -142,12 +142,14 @@ namespace Lanline
 			}
 			fileList = tempFileList.ToArray();
 			hasFileList = true;
+			StatusManager.Instance.RaiseFlag(StatusFlag.NetworkChanged);
 			return (hasFileList ? fileList.Length : -1);
 		}
 		
 		public void InvalidateFileList() {
 			fileList = null;
 			hasFileList = false;
+			StatusManager.Instance.RaiseFlag(StatusFlag.NetworkChanged);
 		}
 		
 	}

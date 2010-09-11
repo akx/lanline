@@ -12,8 +12,8 @@ using System.Collections.Generic;
 namespace Lanline
 {
 	public enum StatusFlag {
-		NETWORK_CHANGED = 1,
-		XFERS_CHANGED = 2
+		NetworkChanged = 1,
+		XfersChanged = 2
 	};
 	
 	
@@ -35,13 +35,14 @@ namespace Lanline
 		
 		public void RaiseFlag(StatusFlag flag) {
 			flags[flag] = true;
+			//Logging.Debug("Raised flag {0}.", flag.ToString());
 		}
 		
 		public bool GetAndLowerFlag(StatusFlag flag) {
-			if(flags.ContainsKey(flag)) {
-				bool val = flags[flag];
+			if(flags.ContainsKey(flag) && flags[flag]) {
+				//Logging.Debug("Lowered flag {0}.", flag.ToString());
 				flags[flag] = false;
-				return val;
+				return true;
 			}
 			return false;
 		}

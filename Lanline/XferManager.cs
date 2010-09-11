@@ -35,7 +35,10 @@ namespace Lanline
 		
 		public void Track(Transfer tr) {
 			lock(transfers) {
-				if(!transfers.Contains(tr)) transfers.Add(tr);
+				if(!transfers.Contains(tr)) {
+					transfers.Add(tr);
+					StatusManager.Instance.RaiseFlag(StatusFlag.XfersChanged);
+				}
 			}
 		}
 		
@@ -48,26 +51,46 @@ namespace Lanline
 					}
 				}
 			}
-			StatusManager.Instance.RaiseFlag(StatusFlag.XFERS_CHANGED);
+			StatusManager.Instance.RaiseFlag(StatusFlag.XfersChanged);
 		}
 		
 		public IEnumerable<Transfer> EnumerateTransfers() {
-			foreach(Transfer xfer in transfers) yield return xfer;
+			for(int i = 0; i < transfers.Count; i++) yield return transfers[i];
 		}
 		
 		public int GetRunningDownloadCount() {
 			int count = 0;
-			foreach(Transfer xfer in transfers) {
-				if(xfer.Direction == TransferDirection.INCOMING && xfer.Status == TransferStatus.Busy) count ++;
+			lock(transfers) {
+				foreach(Transfer xfer in transfers) {
+					if(xfer.Direction == TransferDirection.In && xfer.Status == TransferStatus.Busy) count ++;
+				}
 			}
 			return count;
 		}
 		
+		public void GetRunningCounts(out int dlCount, out int ulCount) {
+			dlCount = 0;
+			ulCount = 0;
+			lock(transfers) {
+				foreach(Transfer xfer in transfers) {
+					if(xfer.Direction == TransferDirection.In && xfer.Status == TransferStatus.Busy) dlCount ++;
+					if(xfer.Direction == TransferDirection.Out && xfer.Status == TransferStatus.Busy) ulCount ++;
+				}
+			}
+		}
+		
 		public void StartQueuedConnections() {
 			int quota = 5 - GetRunningDownloadCount();
+			
+			Logging.Debug("Available download slots: {0}", quota);
+			if(quota <= 0) return;
 			foreach(Transfer xfer in transfers) {
-				if(xfer.Direction == TransferDirection.INCOMING && xfer.Status == TransferStatus.Idle) {
+				if(xfer.Direction == TransferDirection.In && xfer.Status == TransferStatus.Idle) {
+					//Logging.Debug("XferManager starting idle download {0}", xfer);
 					(xfer as IncomingTransfer).Start();
+					StatusManager.Instance.RaiseFlag(StatusFlag.XfersChanged);
+					quota --;
+					if(quota <= 0) break;
 				}
 			}
 		}

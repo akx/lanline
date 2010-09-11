@@ -80,14 +80,9 @@ namespace Lanline
         		client.WriteStreamAsHTTPContent(new MemoryStream(buf));
 
 			} else if(path == "/info") {
-				string name = "(unnamed)";
-				try {
-					name = System.Environment.MachineName;
-				} catch(Exception) {
-					
-				}
+				
 				string version = Application.ProductVersion;
-				string resp = String.Format("version:{0}\nfiles:{1}\nname:{2}", version, ShareManager.Instance.TotalFiles, name);
+				string resp = String.Format("version:{0}\nfiles:{1}\nname:{2}", version, ShareManager.Instance.TotalFiles, SettingsManager.Instance.ComputerName);
 				stream.WriteSimpleHTTPResponse(200, "text/plain", resp);
 				
 				string remoteIp = (client.Client.RemoteEndPoint as IPEndPoint).Address.ToString();
@@ -103,34 +98,11 @@ namespace Lanline
 				} else {
 					OutgoingTransfer transfer = new OutgoingTransfer(this, sfi);
 					XferManager.Instance.Track(transfer);
-					byte[] buffer = new byte[0xfa00];
-					float prog = 0;
-					int writtenTotal = 0;
-					int throttleCounter = 0;
-					int bytesPerMsec = 1048576;
-					FileInfo fi = new FileInfo(sfi.absoluteFsPath);
-					stream.WriteHTTPResponseHeader(200, "application/octet-stream", fi.Length);
-					Socket sock = client.Client;
-					sock.Send(new byte[]{13, 10});
-					using(FileStream sourceStream = new FileStream(sfi.absoluteFsPath, FileMode.Open)) {
-						while(true) {
-							int bufSize = sourceStream.Read(buffer, 0, buffer.Length);
-	        				if (bufSize == 0) break;
-	        				writtenTotal += sock.Send(buffer, bufSize, SocketFlags.None);
-	        				transfer.SetProgress(writtenTotal / (float) fi.Length * 100);
-	        				throttleCounter += bufSize;
-	        				while(throttleCounter >= bytesPerMsec) {
-	        					Thread.Sleep(1);
-	        					throttleCounter -= bytesPerMsec;
-	        				}
-						}
+					try {
+						transfer.RunTransferInThisThread();
+					} catch(Exception exc) {
+						transfer.CancelWithError();
 					}
-					transfer.SetIsComplete();
-					/*
-					stream.WriteHTTPResponseHeader(200, "application/octet-stream", sfi.size);
-					using(FileStream fs = new FileStream(sfi.absoluteFsPath, FileMode.Open)) {
-						client.WriteStreamAsHTTPContent(
-					}*/
 				}
 			}
 			else {

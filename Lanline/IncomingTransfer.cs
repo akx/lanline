@@ -23,7 +23,7 @@ namespace Lanline
 		
 		public IncomingTransfer(Host h, string vpath, string localPath)
 		{
-			direction = TransferDirection.INCOMING;
+			direction = TransferDirection.In;
 			this.remoteHost = h;
 			this.hostName = h.Ip;
 			this.file1 = vpath;
@@ -55,6 +55,7 @@ namespace Lanline
 
 		void worker_DoWork(object sender, DoWorkEventArgs e)
 		{
+			Logging.Log("Started download of " + this.file2);
 			Uri u = remoteHost.GetURI("/f/" + file1);
 			WebRequest req = WebRequest.Create(u);
 			req.Timeout = 3500;
@@ -64,6 +65,7 @@ namespace Lanline
 			long received = 0;
 			Stream inStream = resp.GetResponseStream();
 			byte[] buffer = new byte[262144];
+			Logging.Debug("Starting download of {0}, expecting {1} bytes.", tempFileName, total);
 			using(FileStream outStream = new FileStream(tempFileName, FileMode.CreateNew)) {
 				while(true) {
 					if(worker.CancellationPending) {
@@ -74,9 +76,11 @@ namespace Lanline
 					received += read;
 					//System.Diagnostics.Debug.Print("Received {0} bytes", received);
 					outStream.Write(buffer, 0, read);
-					SetProgress((received / (float)total) * 100);
+					SetProgressAndBytes(received, total);
+					//SetProgress((received / (float)total) * 100);
 				}
 			}
+			Logging.Debug("Finished download of {0}.", tempFileName);
 			if(worker.CancellationPending) {
 				if(File.Exists(tempFileName)) {
 					Logging.Log("Deleting temporary file {0} when canceling transfer", tempFileName);

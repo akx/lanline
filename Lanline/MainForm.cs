@@ -32,16 +32,16 @@ namespace Lanline
 					
 				}
 			};
-			ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
-			ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
+			//ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
+			//ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
 			SharingServer.Instance.Start();
-			NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
+			//NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
 			
 			DoRefreshShares();
 			RefreshSharesList();			
 			RefreshXfersList();
 			RefreshHostsList();
-			
+			Text = "Lanline " + Application.ProductVersion;
 		}
 		
 		
@@ -108,36 +108,30 @@ namespace Lanline
 		}
 		
 		void RefreshXfersList() {
-			//xfersList.Items.Clear();
 			xfersList.BeginUpdate();
+			xfersList.Items.Clear();
+			int nUp = 0, nDown = 0, nQueued = 0;
 			foreach(Transfer tr in XferManager.Instance.EnumerateTransfers()) {
-				ListViewItem lvi = null;
-				foreach(ListViewItem xlvi in xfersList.Items) {
-					if(xlvi.Tag == tr) {
-						lvi = xlvi;
-						break;
-					}
-				}
-				if(lvi == null) {
-					lvi = new ListViewItem();
-					xfersList.Items.Add(lvi);
-				}
-				lvi.Tag = tr;
-				int progBars = (int)Math.Round(tr.Progress / 5.0f);
-				string[] subitems = new string[]{
-					(tr.Direction == TransferDirection.OUTGOING ? "^" : "V") + " " + tr.HostName,
+				int progBars = (int)Math.Round((tr.Status == TransferStatus.Completed ? 100 : tr.Progress) / 5.0);
+				ListViewItem lvi = new ListViewItem(new string[]{
+					(tr.Direction == TransferDirection.Out ? "^" : "V") + " " + tr.HostName,
 					tr.File1,
-					(tr.HasCompleted ? "Done" : tr.Progress.ToString()),
-					"|".Repeat(progBars).PadRight(20, '.')
-				};
-				for(int i = 0; i < subitems.Length; i++) {
-					if(i < lvi.SubItems.Count) lvi.SubItems[i].Text = subitems[i];
-					else lvi.SubItems.Add(subitems[i]);
-				}
-				
-				
+					tr.GetProgString(),
+					(tr.Status == TransferStatus.Busy ? "|".Repeat(progBars).PadRight(20, '.') : ""),
+					tr.Direction.ToString(),
+					tr.Status.ToString(),
+					Math.Round(tr.GetAverageSpeed(), 1) + "K/s"
+				});
+				lvi.Tag = tr;
+				xfersList.Items.Add(lvi);
+				if(tr.Direction == TransferDirection.Out && tr.Status == TransferStatus.Busy) nUp++;
+				if(tr.Direction == TransferDirection.In) {
+					if(tr.Status == TransferStatus.Busy) nDown ++;
+					if(tr.Status == TransferStatus.Idle) nQueued ++;
+				}				
 			}
 			xfersList.EndUpdate();
+			xfersTab.Text = String.Format("Xfers ({0}/{1} dn, {2} up)", nDown, nQueued, nUp);
 		}
 		
 		void ClearCompletedXfersButtonClick(object sender, EventArgs e)
@@ -248,14 +242,53 @@ namespace Lanline
 		
 		void UpdateTimerTick(object sender, EventArgs e)
 		{
-			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.XFERS_CHANGED)) {
+			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.XfersChanged)) {
 				XferManager.Instance.StartQueuedConnections();
-				if(tabControl1.SelectedTab == xfersTab) RefreshXfersList();
+				RefreshXfersList();
 			}
-			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.NETWORK_CHANGED)) {
+			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.NetworkChanged)) {
 				RefreshHostsList();
 			}
 			
+		}
+		
+		void BrowseFilesToolStripMenuItemClick(object sender, EventArgs e)
+		{
+			Host selectedHost = GetListSelectedHost();
+			if(selectedHost != null) {
+				BrowserManager.Instance.Open(selectedHost);
+			}
+		}
+		
+		void RefreshSettingsPage() {
+			defaultDownloadDirectoryBox.Text = SettingsManager.Instance.DefaultDownloadFolder;
+		}
+		
+		void TabControl1Selected(object sender, TabControlEventArgs e)
+		{
+			if(e.TabPage == settingsTab) RefreshSettingsPage();
+		}
+		
+		void BrowseDefaultDirButtonClick(object sender, EventArgs e)
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog();
+			fbd.SelectedPath = SettingsManager.Instance.DefaultDownloadFolder;
+			if(fbd.ShowDialog() == DialogResult.OK) {
+				if(Directory.Exists(fbd.SelectedPath)) {
+					SettingsManager.Instance.DefaultDownloadFolder = fbd.SelectedPath;
+					RefreshSettingsPage();
+				}
+			}
+		}
+		
+		void MainFormFormClosing(object sender, FormClosingEventArgs e)
+		{
+			int dlCount, ulCount;
+			XferManager.Instance.GetRunningCounts(out dlCount, out ulCount);
+			string msg = "Are you sure you want to exit Lanline?";
+			if(dlCount > 0) msg += "\nThere are running downloads.";
+			if(ulCount > 0) msg += "\nThere are running uploads.";
+			e.Cancel = (MessageBox.Show(msg, "Lanline", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No);
 		}
 	}
 }

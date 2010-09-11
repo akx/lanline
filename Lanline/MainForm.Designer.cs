@@ -50,6 +50,9 @@ namespace Lanline
 			System.Windows.Forms.ColumnHeader progressHdr;
 			System.Windows.Forms.ColumnHeader columnHeader1;
 			System.Windows.Forms.ColumnHeader columnHeader2;
+			System.Windows.Forms.ColumnHeader dirctionHdr;
+			System.Windows.Forms.ColumnHeader statusHdr;
+			System.Windows.Forms.ColumnHeader speedHdr;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -71,6 +74,10 @@ namespace Lanline
 			this.xfersList = new System.Windows.Forms.ListView();
 			this.xfersToolStrip = new System.Windows.Forms.ToolStrip();
 			this.clearCompletedXfersButton = new System.Windows.Forms.ToolStripButton();
+			this.settingsTab = new System.Windows.Forms.TabPage();
+			this.browseDefaultDirButton = new System.Windows.Forms.Button();
+			this.defaultDownloadDirectoryBox = new System.Windows.Forms.TextBox();
+			this.label1 = new System.Windows.Forms.Label();
 			this.updateTimer = new System.Windows.Forms.Timer(this.components);
 			Path = new System.Windows.Forms.ColumnHeader();
 			Vpath = new System.Windows.Forms.ColumnHeader();
@@ -85,6 +92,9 @@ namespace Lanline
 			progressHdr = new System.Windows.Forms.ColumnHeader();
 			columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			columnHeader2 = new System.Windows.Forms.ColumnHeader();
+			dirctionHdr = new System.Windows.Forms.ColumnHeader();
+			statusHdr = new System.Windows.Forms.ColumnHeader();
+			speedHdr = new System.Windows.Forms.ColumnHeader();
 			this.statusStrip1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.hostsPage.SuspendLayout();
@@ -94,6 +104,7 @@ namespace Lanline
 			this.sharesToolStrip.SuspendLayout();
 			this.xfersTab.SuspendLayout();
 			this.xfersToolStrip.SuspendLayout();
+			this.settingsTab.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// Path
@@ -151,13 +162,26 @@ namespace Lanline
 			columnHeader2.Text = "Got Filelist?";
 			columnHeader2.Width = 75;
 			// 
+			// dirctionHdr
+			// 
+			dirctionHdr.Text = "Dir";
+			// 
+			// statusHdr
+			// 
+			statusHdr.Text = "Status";
+			// 
+			// speedHdr
+			// 
+			speedHdr.Text = "Speed";
+			speedHdr.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
 			// statusStrip1
 			// 
 			this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 									this.statusLabel});
-			this.statusStrip1.Location = new System.Drawing.Point(0, 369);
+			this.statusStrip1.Location = new System.Drawing.Point(0, 429);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(437, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(643, 22);
 			this.statusStrip1.TabIndex = 2;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
@@ -171,21 +195,23 @@ namespace Lanline
 			this.tabControl1.Controls.Add(this.hostsPage);
 			this.tabControl1.Controls.Add(this.sharesTab);
 			this.tabControl1.Controls.Add(this.xfersTab);
+			this.tabControl1.Controls.Add(this.settingsTab);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(437, 369);
+			this.tabControl1.Size = new System.Drawing.Size(643, 429);
 			this.tabControl1.TabIndex = 3;
+			this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.TabControl1Selected);
 			// 
 			// hostsPage
 			// 
 			this.hostsPage.Controls.Add(this.hostsList);
 			this.hostsPage.Controls.Add(this.netToolStrip);
-			this.hostsPage.Location = new System.Drawing.Point(4, 22);
+			this.hostsPage.Location = new System.Drawing.Point(4, 24);
 			this.hostsPage.Name = "hostsPage";
 			this.hostsPage.Padding = new System.Windows.Forms.Padding(3);
-			this.hostsPage.Size = new System.Drawing.Size(429, 343);
+			this.hostsPage.Size = new System.Drawing.Size(635, 401);
 			this.hostsPage.TabIndex = 0;
 			this.hostsPage.Text = "Network";
 			this.hostsPage.UseVisualStyleBackColor = true;
@@ -204,7 +230,7 @@ namespace Lanline
 			this.hostsList.GridLines = true;
 			this.hostsList.Location = new System.Drawing.Point(3, 28);
 			this.hostsList.Name = "hostsList";
-			this.hostsList.Size = new System.Drawing.Size(423, 312);
+			this.hostsList.Size = new System.Drawing.Size(629, 370);
 			this.hostsList.TabIndex = 5;
 			this.hostsList.UseCompatibleStateImageBehavior = false;
 			this.hostsList.View = System.Windows.Forms.View.Details;
@@ -223,6 +249,7 @@ namespace Lanline
 			this.browseFilesToolStripMenuItem.Name = "browseFilesToolStripMenuItem";
 			this.browseFilesToolStripMenuItem.Size = new System.Drawing.Size(139, 22);
 			this.browseFilesToolStripMenuItem.Text = "Browse Files";
+			this.browseFilesToolStripMenuItem.Click += new System.EventHandler(this.BrowseFilesToolStripMenuItemClick);
 			// 
 			// forgetHostToolStripMenuItem
 			// 
@@ -240,7 +267,7 @@ namespace Lanline
 									this.reverifyHostsBtn});
 			this.netToolStrip.Location = new System.Drawing.Point(3, 3);
 			this.netToolStrip.Name = "netToolStrip";
-			this.netToolStrip.Size = new System.Drawing.Size(423, 25);
+			this.netToolStrip.Size = new System.Drawing.Size(629, 25);
 			this.netToolStrip.TabIndex = 4;
 			this.netToolStrip.Text = "toolStrip1";
 			// 
@@ -278,10 +305,10 @@ namespace Lanline
 			// 
 			this.sharesTab.Controls.Add(this.sharesList);
 			this.sharesTab.Controls.Add(this.sharesToolStrip);
-			this.sharesTab.Location = new System.Drawing.Point(4, 22);
+			this.sharesTab.Location = new System.Drawing.Point(4, 24);
 			this.sharesTab.Name = "sharesTab";
 			this.sharesTab.Padding = new System.Windows.Forms.Padding(3);
-			this.sharesTab.Size = new System.Drawing.Size(429, 343);
+			this.sharesTab.Size = new System.Drawing.Size(635, 401);
 			this.sharesTab.TabIndex = 1;
 			this.sharesTab.Text = "Shares";
 			this.sharesTab.UseVisualStyleBackColor = true;
@@ -299,7 +326,7 @@ namespace Lanline
 			this.sharesList.GridLines = true;
 			this.sharesList.Location = new System.Drawing.Point(3, 28);
 			this.sharesList.Name = "sharesList";
-			this.sharesList.Size = new System.Drawing.Size(423, 312);
+			this.sharesList.Size = new System.Drawing.Size(629, 370);
 			this.sharesList.TabIndex = 2;
 			this.sharesList.UseCompatibleStateImageBehavior = false;
 			this.sharesList.View = System.Windows.Forms.View.Details;
@@ -315,7 +342,7 @@ namespace Lanline
 									this.refreshSharesBtn});
 			this.sharesToolStrip.Location = new System.Drawing.Point(3, 3);
 			this.sharesToolStrip.Name = "sharesToolStrip";
-			this.sharesToolStrip.Size = new System.Drawing.Size(423, 25);
+			this.sharesToolStrip.Size = new System.Drawing.Size(629, 25);
 			this.sharesToolStrip.TabIndex = 1;
 			this.sharesToolStrip.Text = "toolStrip2";
 			// 
@@ -333,10 +360,10 @@ namespace Lanline
 			// 
 			this.xfersTab.Controls.Add(this.xfersList);
 			this.xfersTab.Controls.Add(this.xfersToolStrip);
-			this.xfersTab.Location = new System.Drawing.Point(4, 22);
+			this.xfersTab.Location = new System.Drawing.Point(4, 24);
 			this.xfersTab.Name = "xfersTab";
 			this.xfersTab.Padding = new System.Windows.Forms.Padding(3);
-			this.xfersTab.Size = new System.Drawing.Size(429, 343);
+			this.xfersTab.Size = new System.Drawing.Size(635, 401);
 			this.xfersTab.TabIndex = 2;
 			this.xfersTab.Text = "Xfers";
 			this.xfersTab.UseVisualStyleBackColor = true;
@@ -347,13 +374,17 @@ namespace Lanline
 									hostHdr,
 									fileHdr,
 									percHdr,
-									progressHdr});
+									progressHdr,
+									dirctionHdr,
+									statusHdr,
+									speedHdr});
 			this.xfersList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.xfersList.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.xfersList.FullRowSelect = true;
 			this.xfersList.GridLines = true;
 			this.xfersList.Location = new System.Drawing.Point(3, 28);
 			this.xfersList.Name = "xfersList";
-			this.xfersList.Size = new System.Drawing.Size(423, 312);
+			this.xfersList.Size = new System.Drawing.Size(629, 370);
 			this.xfersList.TabIndex = 1;
 			this.xfersList.UseCompatibleStateImageBehavior = false;
 			this.xfersList.View = System.Windows.Forms.View.Details;
@@ -365,18 +396,58 @@ namespace Lanline
 									this.clearCompletedXfersButton});
 			this.xfersToolStrip.Location = new System.Drawing.Point(3, 3);
 			this.xfersToolStrip.Name = "xfersToolStrip";
-			this.xfersToolStrip.Size = new System.Drawing.Size(423, 25);
+			this.xfersToolStrip.Size = new System.Drawing.Size(629, 25);
 			this.xfersToolStrip.TabIndex = 0;
 			this.xfersToolStrip.Text = "toolStrip3";
 			// 
 			// clearCompletedXfersButton
 			// 
+			this.clearCompletedXfersButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			this.clearCompletedXfersButton.Image = ((System.Drawing.Image)(resources.GetObject("clearCompletedXfersButton.Image")));
 			this.clearCompletedXfersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.clearCompletedXfersButton.Name = "clearCompletedXfersButton";
-			this.clearCompletedXfersButton.Size = new System.Drawing.Size(109, 22);
+			this.clearCompletedXfersButton.Size = new System.Drawing.Size(93, 22);
 			this.clearCompletedXfersButton.Text = "Clear Completed";
 			this.clearCompletedXfersButton.Click += new System.EventHandler(this.ClearCompletedXfersButtonClick);
+			// 
+			// settingsTab
+			// 
+			this.settingsTab.Controls.Add(this.browseDefaultDirButton);
+			this.settingsTab.Controls.Add(this.defaultDownloadDirectoryBox);
+			this.settingsTab.Controls.Add(this.label1);
+			this.settingsTab.Location = new System.Drawing.Point(4, 24);
+			this.settingsTab.Name = "settingsTab";
+			this.settingsTab.Padding = new System.Windows.Forms.Padding(3);
+			this.settingsTab.Size = new System.Drawing.Size(635, 401);
+			this.settingsTab.TabIndex = 3;
+			this.settingsTab.Text = "Settings";
+			this.settingsTab.UseVisualStyleBackColor = true;
+			// 
+			// browseDefaultDirButton
+			// 
+			this.browseDefaultDirButton.Location = new System.Drawing.Point(346, 28);
+			this.browseDefaultDirButton.Name = "browseDefaultDirButton";
+			this.browseDefaultDirButton.Size = new System.Drawing.Size(75, 23);
+			this.browseDefaultDirButton.TabIndex = 2;
+			this.browseDefaultDirButton.Text = "Browse";
+			this.browseDefaultDirButton.UseVisualStyleBackColor = true;
+			this.browseDefaultDirButton.Click += new System.EventHandler(this.BrowseDefaultDirButtonClick);
+			// 
+			// defaultDownloadDirectoryBox
+			// 
+			this.defaultDownloadDirectoryBox.Enabled = false;
+			this.defaultDownloadDirectoryBox.Location = new System.Drawing.Point(9, 28);
+			this.defaultDownloadDirectoryBox.Name = "defaultDownloadDirectoryBox";
+			this.defaultDownloadDirectoryBox.Size = new System.Drawing.Size(331, 23);
+			this.defaultDownloadDirectoryBox.TabIndex = 1;
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(9, 8);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(412, 15);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Default Download Directory";
 			// 
 			// updateTimer
 			// 
@@ -386,15 +457,16 @@ namespace Lanline
 			// 
 			// MainForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(437, 391);
+			this.ClientSize = new System.Drawing.Size(643, 451);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.statusStrip1);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.Name = "MainForm";
 			this.Text = "Lanline";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
 			this.statusStrip1.ResumeLayout(false);
 			this.statusStrip1.PerformLayout();
 			this.tabControl1.ResumeLayout(false);
@@ -411,9 +483,15 @@ namespace Lanline
 			this.xfersTab.PerformLayout();
 			this.xfersToolStrip.ResumeLayout(false);
 			this.xfersToolStrip.PerformLayout();
+			this.settingsTab.ResumeLayout(false);
+			this.settingsTab.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.TextBox defaultDownloadDirectoryBox;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Button browseDefaultDirButton;
+		private System.Windows.Forms.TabPage settingsTab;
 		private System.Windows.Forms.Timer updateTimer;
 		private System.Windows.Forms.ToolStripMenuItem forgetHostToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem browseFilesToolStripMenuItem;
