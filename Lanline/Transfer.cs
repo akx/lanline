@@ -16,10 +16,11 @@ namespace Lanline
 	};
 	
 	public enum TransferStatus {
-		BUSY = 0,
-		COMPLETED = 1,
-		CANCELED = 2,
-		ERROR = 3
+		Idle = 0,
+		Busy,
+		Completed,
+		Canceled,
+		Error
 	};
 	
 	public class Transfer
@@ -33,6 +34,11 @@ namespace Lanline
 		protected TransferStatus status;
 		protected DateTime startedOn;
 		protected DateTime completedOn;
+		
+		public TransferStatus Status {
+			get { return status; }
+		}
+		
 		
 		public TransferDirection Direction {
 			get { return direction; }
@@ -60,7 +66,7 @@ namespace Lanline
 		}
 		
 		public bool HasCompleted {
-			get { return (status == TransferStatus.COMPLETED); }
+			get { return (status == TransferStatus.Completed); }
 		}
 		
 		
@@ -68,7 +74,7 @@ namespace Lanline
 		{
 			startedOn = DateTime.Now;
 			progress = 0;
-			status = TransferStatus.BUSY;
+			status = TransferStatus.Busy;
 			hostName = file1 = file2 = "???";
 			remoteHost = null;
 		}
@@ -76,19 +82,21 @@ namespace Lanline
 		public void SetProgress(float progress) {
 			if(progress < 0) progress = 0;
 			if(progress > 100) progress = 100;
+			if(Math.Abs(progress - this.progress) > 3) StatusManager.Instance.RaiseFlag(StatusFlag.XFERS_CHANGED);
 			this.progress = progress;
 		}
 		
 		public void SetIsComplete() {
-			if(status == TransferStatus.BUSY) {
+			if(status == TransferStatus.Busy) {
 				SetProgress(100);
-				status = TransferStatus.COMPLETED;
+				status = TransferStatus.Completed;
 				completedOn = DateTime.Now;
+				StatusManager.Instance.RaiseFlag(StatusFlag.XFERS_CHANGED);
 			}
 		}
 		
-		public void Cancel() {
-			
+		public virtual void Cancel() {
+			StatusManager.Instance.RaiseFlag(StatusFlag.XFERS_CHANGED);
 		}
 	}
 }

@@ -53,7 +53,9 @@ namespace Lanline
 		
 		public string Name {
 			get { return name; }
+			set { name = value; }
 		}
+		
 		
 		public int NFiles {
 			get { return nFiles; }

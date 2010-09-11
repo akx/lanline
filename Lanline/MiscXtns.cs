@@ -18,7 +18,7 @@ namespace Lanline
 		public static string Repeat(this string s, int times) {
 			string outS = "";
 			while(times -- > 0) outS += s;
-			return s;
+			return outS;
 		}
 	}
 }
