@@ -40,12 +40,9 @@ namespace Lanline
 			client.Client.Send(new byte[]{13, 10});
 			while (true)
    			{
-    			Logging.Log("Reading @ offset {0}", sourceStream.Position);
         		int size = sourceStream.Read(buffer, 0, buffer.Length);
         		if (size == 0) break;
-        		Logging.Log("Size read: {0}", size);
         		int wrote = client.Client.Send(buffer, size, SocketFlags.None);
-        		Logging.Log("Size written: {0}", wrote);
         		Thread.Sleep(10);
     		}
 			

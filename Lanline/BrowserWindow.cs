@@ -112,7 +112,7 @@ namespace Lanline
 					string[] parts = s.Split('$');
 					ListViewItem lvi = new ListViewItem(new string[]{
 					                                    	Path.GetFileName(parts[0]),
-					                                    	(Convert.ToInt64(parts[1]) / 1024 / 1024).ToString()
+					                                    	Math.Round((float)(Convert.ToInt64(parts[1]) / 1024) / 1024.0, 2).ToString()
 					                                    });
 					lvi.Tag = parts[0];
 					listView1.Items.Add(lvi);

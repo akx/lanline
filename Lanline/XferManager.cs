@@ -41,14 +41,35 @@ namespace Lanline
 		
 		public void ClearCompleted() {
 			lock(transfers) {
-				
+				for(int i = 0; i < transfers.Count; i++) {
+					if(transfers[i].Status == TransferStatus.Completed) {
+						transfers.RemoveAt(i);
+						i--;
+					}
+				}
 			}
+			StatusManager.Instance.RaiseFlag(StatusFlag.XFERS_CHANGED);
 		}
 		
 		public IEnumerable<Transfer> EnumerateTransfers() {
 			foreach(Transfer xfer in transfers) yield return xfer;
 		}
 		
+		public int GetRunningDownloadCount() {
+			int count = 0;
+			foreach(Transfer xfer in transfers) {
+				if(xfer.Direction == TransferDirection.INCOMING && xfer.Status == TransferStatus.Busy) count ++;
+			}
+			return count;
+		}
 		
+		public void StartQueuedConnections() {
+			int quota = 5 - GetRunningDownloadCount();
+			foreach(Transfer xfer in transfers) {
+				if(xfer.Direction == TransferDirection.INCOMING && xfer.Status == TransferStatus.Idle) {
+					(xfer as IncomingTransfer).Start();
+				}
+			}
+		}
 	}
 }

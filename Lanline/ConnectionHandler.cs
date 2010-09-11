@@ -89,6 +89,13 @@ namespace Lanline
 				string version = Application.ProductVersion;
 				string resp = String.Format("version:{0}\nfiles:{1}\nname:{2}", version, ShareManager.Instance.TotalFiles, name);
 				stream.WriteSimpleHTTPResponse(200, "text/plain", resp);
+				
+				string remoteIp = (client.Client.RemoteEndPoint as IPEndPoint).Address.ToString();
+				if(remoteIp != "127.0.0.1" && !NetworkManager.Instance.HostIPIsKnown(remoteIp)) {
+					Host h = NetworkManager.Instance.AddHost(remoteIp, NetworkManager.LANLINE_PORT, false);
+					h.Name = "<downloader>";
+				}
+				
 			} else if(path.StartsWith("/f/")) {
 				ShareFileInfo sfi = ShareManager.Instance.ResolveVPath(path.Substring(3));
 				if(sfi == null) {
@@ -98,6 +105,7 @@ namespace Lanline
 					XferManager.Instance.Track(transfer);
 					byte[] buffer = new byte[0xfa00];
 					float prog = 0;
+					int writtenTotal = 0;
 					int throttleCounter = 0;
 					int bytesPerMsec = 1048576;
 					FileInfo fi = new FileInfo(sfi.absoluteFsPath);
@@ -108,8 +116,8 @@ namespace Lanline
 						while(true) {
 							int bufSize = sourceStream.Read(buffer, 0, buffer.Length);
 	        				if (bufSize == 0) break;
-	        				sock.Send(buffer, bufSize, SocketFlags.None);
-	        				transfer.SetProgress((int)Math.Round(sourceStream.Position / (float) fi.Length) * 100);
+	        				writtenTotal += sock.Send(buffer, bufSize, SocketFlags.None);
+	        				transfer.SetProgress(writtenTotal / (float) fi.Length * 100);
 	        				throttleCounter += bufSize;
 	        				while(throttleCounter >= bytesPerMsec) {
 	        					Thread.Sleep(1);

@@ -28,19 +28,20 @@ namespace Lanline
 			}
 		}
 		
-		public NetworkManager()
+		NetworkManager()
 		{
 			knownHosts = new List<Host>();
 		}
 		
-		public bool AddHost(string ip, uint port, bool verify) {
+		public Host AddHost(string ip, uint port, bool verify) {
 			Host h = new Host(ip, port);
 			if(verify) {
 				h.Verify();
-				if(!h.Verified) return false;
+				if(!h.Verified) return null;
 			}
 			knownHosts.Add(h);
-			return true;
+			StatusManager.Instance.RaiseFlag(StatusFlag.NETWORK_CHANGED);
+			return h;
 		}
 		
 		public IEnumerable<Host> EnumerateKnownHosts() {
@@ -51,7 +52,17 @@ namespace Lanline
 		
 		
 		public void RemoveKnownHost(Host h) {
-			if(knownHosts.Contains(h)) knownHosts.Remove(h);
+			if(knownHosts.Contains(h)) {
+				knownHosts.Remove(h);
+				StatusManager.Instance.RaiseFlag(StatusFlag.NETWORK_CHANGED);
+			}
 		}
+		
+		public bool HostIPIsKnown(string ip) {
+			foreach(Host h in knownHosts) if(h.Ip == ip) return true;
+			return false;
+		}
+		
+		
 	}
 }

@@ -32,10 +32,10 @@ namespace Lanline
 					
 				}
 			};
-			//ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
-			//ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
+			ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
+			ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
 			SharingServer.Instance.Start();
-			//NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
+			NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
 			
 			DoRefreshShares();
 			RefreshSharesList();			
@@ -108,17 +108,34 @@ namespace Lanline
 		}
 		
 		void RefreshXfersList() {
-			xfersList.Items.Clear();
+			//xfersList.Items.Clear();
 			xfersList.BeginUpdate();
 			foreach(Transfer tr in XferManager.Instance.EnumerateTransfers()) {
-				ListViewItem lvi = new ListViewItem(new string[] {
-				   (tr.Direction == TransferDirection.OUTGOING ? "^" : "V") + " " + tr.HostName,
-				   tr.File1,
-				   (tr.HasCompleted ? "Done" : tr.Progress.ToString()),
-				   "|".Repeat((int)(tr.Progress / (100.0 / 20.0))).PadRight(20, '.')
-		        });
+				ListViewItem lvi = null;
+				foreach(ListViewItem xlvi in xfersList.Items) {
+					if(xlvi.Tag == tr) {
+						lvi = xlvi;
+						break;
+					}
+				}
+				if(lvi == null) {
+					lvi = new ListViewItem();
+					xfersList.Items.Add(lvi);
+				}
 				lvi.Tag = tr;
-				xfersList.Items.Add(lvi);
+				int progBars = (int)Math.Round(tr.Progress / 5.0f);
+				string[] subitems = new string[]{
+					(tr.Direction == TransferDirection.OUTGOING ? "^" : "V") + " " + tr.HostName,
+					tr.File1,
+					(tr.HasCompleted ? "Done" : tr.Progress.ToString()),
+					"|".Repeat(progBars).PadRight(20, '.')
+				};
+				for(int i = 0; i < subitems.Length; i++) {
+					if(i < lvi.SubItems.Count) lvi.SubItems[i].Text = subitems[i];
+					else lvi.SubItems.Add(subitems[i]);
+				}
+				
+				
 			}
 			xfersList.EndUpdate();
 		}
@@ -193,7 +210,7 @@ namespace Lanline
 			if(ip == null) return;
 			bool ok = false;
 			while(!ok) {
-				ok = NetworkManager.Instance.AddHost(ip, NetworkManager.LANLINE_PORT, true);
+				ok = (NetworkManager.Instance.AddHost(ip, NetworkManager.LANLINE_PORT, true) != null);
 				if(!ok) {
 					if(MessageBox.Show(
 						"Could not verify that the host is alive.\n" + 
@@ -229,9 +246,16 @@ namespace Lanline
 			}
 		}
 		
-		void XferUpdateTimerTick(object sender, EventArgs e)
+		void UpdateTimerTick(object sender, EventArgs e)
 		{
-			if(tabControl1.SelectedTab == xfersTab) RefreshXfersList();
+			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.XFERS_CHANGED)) {
+				XferManager.Instance.StartQueuedConnections();
+				if(tabControl1.SelectedTab == xfersTab) RefreshXfersList();
+			}
+			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.NETWORK_CHANGED)) {
+				RefreshHostsList();
+			}
+			
 		}
 	}
 }

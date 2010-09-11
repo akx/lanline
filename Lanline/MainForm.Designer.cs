@@ -71,7 +71,7 @@ namespace Lanline
 			this.xfersList = new System.Windows.Forms.ListView();
 			this.xfersToolStrip = new System.Windows.Forms.ToolStrip();
 			this.clearCompletedXfersButton = new System.Windows.Forms.ToolStripButton();
-			this.xferUpdateTimer = new System.Windows.Forms.Timer(this.components);
+			this.updateTimer = new System.Windows.Forms.Timer(this.components);
 			Path = new System.Windows.Forms.ColumnHeader();
 			Vpath = new System.Windows.Forms.ColumnHeader();
 			columnHeader4 = new System.Windows.Forms.ColumnHeader();
@@ -378,10 +378,11 @@ namespace Lanline
 			this.clearCompletedXfersButton.Text = "Clear Completed";
 			this.clearCompletedXfersButton.Click += new System.EventHandler(this.ClearCompletedXfersButtonClick);
 			// 
-			// xferUpdateTimer
+			// updateTimer
 			// 
-			this.xferUpdateTimer.Enabled = true;
-			this.xferUpdateTimer.Tick += new System.EventHandler(this.XferUpdateTimerTick);
+			this.updateTimer.Enabled = true;
+			this.updateTimer.Interval = 250;
+			this.updateTimer.Tick += new System.EventHandler(this.UpdateTimerTick);
 			// 
 			// MainForm
 			// 
@@ -413,7 +414,7 @@ namespace Lanline
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
-		private System.Windows.Forms.Timer xferUpdateTimer;
+		private System.Windows.Forms.Timer updateTimer;
 		private System.Windows.Forms.ToolStripMenuItem forgetHostToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem browseFilesToolStripMenuItem;
 		private System.Windows.Forms.ContextMenuStrip hostContextMenu;
