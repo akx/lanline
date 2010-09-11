@@ -40,6 +40,7 @@ namespace Lanline
 		Queue<DirectoryInfo> directoryQueue;
 		
 		
+		
 		public string FsPath {
 			get { return fsPath; }
 		}
@@ -54,6 +55,14 @@ namespace Lanline
 		
 		public bool RefreshInProgress {
 			get { return refreshInProgress; }
+		}
+		
+		public long TotalBytes {
+			get {
+				long bytes = 0;
+				foreach(ShareFileInfo sfi in files) bytes += sfi.size;
+				return bytes;
+			}
 		}
 		
 		
@@ -91,6 +100,7 @@ namespace Lanline
 				
 				if((fi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden) continue;
 				if((fi.Attributes & FileAttributes.System) == FileAttributes.System) continue;
+				if(fi.FullName.IndexOf('$') > -1) continue;
 				string relVpath = Path.GetFullPath(fi.FullName).Replace(fsPath, "");
 				files.Add(new ShareFileInfo(fi.FullName, relVpath, fi.Length));
 			}
@@ -102,5 +112,11 @@ namespace Lanline
 		public int FileCount { get { return files.Count; } }
 		public int DirQueueLength { get { return directoryQueue.Count; } }
 		
+		public IEnumerable<ShareFileInfo> EnumerateFiles() {
+			foreach(ShareFileInfo sfi in files) yield return sfi;
+		}
+		
 	}
+	
+	
 }

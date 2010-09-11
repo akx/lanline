@@ -12,6 +12,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace Lanline
 {
@@ -22,6 +23,16 @@ namespace Lanline
 	{
 		TcpClient client;
 		NetworkStream stream;
+		
+		public TcpClient Client {
+			get { return client; }
+		}
+		
+		public NetworkStream Stream {
+			get { return stream; }
+		}
+		
+		
 		public ConnectionHandler(TcpClient client)
 		{
 			this.client = client;
@@ -39,9 +50,46 @@ namespace Lanline
 				stream.WriteUTF8("HTTP/1.0 400 Error\r\nContent-type:text/plain\r\n\r\nNot supported");
 				return;
 			}
-			string path = parts[1];
-			stream.WriteSimpleHTTPResponse(200, "text/plain", "Requested: " + path);
+			// Pretend we're interested in HTTP headers
+			while(true) {
+				string line = sr.ReadLine();
+				Logging.Log("  Header: {0}", line.Trim());
+				if(line.Trim() == "") break;
+			}
+			
+			try {
+				InnerHandleHTTPRequest(parts[1]);
+			} catch(Exception exc) {
+				Logging.Log("Exception while handling HTTP request: {0}", exc.ToString());
+			}
 			client.Close();
+		}
+		
+		void InnerHandleHTTPRequest(string path) {
+			
+
+			if(path == "/filelist") {
+				string[] fileList = ShareManager.Instance.GetFullVFileList();
+				byte[] buf = Encoding.UTF8.GetBytes(String.Join("\r\n", fileList));
+				stream.WriteHTTPResponseHeader(200, "text/plain", buf.Length);
+        		client.WriteStreamAsHTTPContent(new MemoryStream(buf));
+
+			} else if(path.StartsWith("/f/")) {
+				ShareFileInfo sfi = ShareManager.Instance.ResolveVPath(path.Substring(3));
+				if(sfi == null) {
+					stream.WriteSimpleHTTPResponse(404, "text/plain", "Not found!");
+				} else {
+					XferManager.Instance.BeginOutgoingTransfer(this, sfi);
+					/*
+					stream.WriteHTTPResponseHeader(200, "application/octet-stream", sfi.size);
+					using(FileStream fs = new FileStream(sfi.absoluteFsPath, FileMode.Open)) {
+						client.WriteStreamAsHTTPContent(
+					}*/
+				}
+			}
+			else {
+				stream.WriteSimpleHTTPResponse(200, "text/plain", "Requested: " + path);
+			}
 		}
 	}
 }
