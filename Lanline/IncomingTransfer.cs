@@ -32,14 +32,14 @@ namespace Lanline
 		}
 		
 		public void Start() {
-			/*
+			
 			worker = new BackgroundWorker();
 			worker.WorkerReportsProgress = true;
 			worker.WorkerSupportsCancellation = true;
 			worker.DoWork += new DoWorkEventHandler(worker_DoWork);
 			worker.RunWorkerAsync();
-			*/
-			worker_DoWork(null, null);
+			
+			//worker_DoWork(null, null);
 		}
 
 		void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -58,7 +58,7 @@ namespace Lanline
 					int read = inStream.Read(buffer, 0, buffer.Length);
 					if(read == 0) break;
 					received += read;
-					System.Diagnostics.Debug.Print("Received {0} bytes", received);
+					//System.Diagnostics.Debug.Print("Received {0} bytes", received);
 					outStream.Write(buffer, 0, read);
 					SetProgress((read / (float)received) * 100);
 				}
