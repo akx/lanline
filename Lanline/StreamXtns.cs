@@ -28,7 +28,7 @@ namespace Lanline
 			}*/
 		}
 		
-		public static void WriteHTTPResponseHeader(this Stream stream, int code, string contentType, int contentLength) {
+		public static void WriteHTTPResponseHeader(this Stream stream, int code, string contentType, long contentLength) {
 			stream.WriteUTF8(string.Format("HTTP/1.0 {0} {1}\r\n", code, HttpStatusCode.GetName(typeof(HttpStatusCode), code) ?? "UNKNOWN"));
 			stream.WriteUTF8("Content-Type: " + contentType + "\r\n");
 			if(contentLength > 0) stream.WriteUTF8("Content-Length: " + contentLength.ToString(CultureInfo.InvariantCulture) + "\r\n");

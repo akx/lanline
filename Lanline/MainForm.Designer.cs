@@ -36,9 +36,6 @@ namespace Lanline
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.ColumnHeader columnHeader1;
-			System.Windows.Forms.ColumnHeader columnHeader2;
-			System.Windows.Forms.ColumnHeader columnHeader3;
 			System.Windows.Forms.ColumnHeader Path;
 			System.Windows.Forms.ColumnHeader Vpath;
 			System.Windows.Forms.ColumnHeader columnHeader4;
@@ -46,24 +43,27 @@ namespace Lanline
 			System.Windows.Forms.ColumnHeader columnHeader6;
 			System.Windows.Forms.ColumnHeader columnHeader7;
 			System.Windows.Forms.ColumnHeader columnHeader8;
+			System.Windows.Forms.ColumnHeader fileHdr;
+			System.Windows.Forms.ColumnHeader percHdr;
+			System.Windows.Forms.ColumnHeader hostHdr;
+			System.Windows.Forms.ColumnHeader progressHdr;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.hostsPage = new System.Windows.Forms.TabPage();
 			this.hostsList = new System.Windows.Forms.ListView();
-			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this.netToolStrip = new System.Windows.Forms.ToolStrip();
 			this.addHost = new System.Windows.Forms.ToolStripButton();
 			this.discoverBtn = new System.Windows.Forms.ToolStripButton();
 			this.sharesTab = new System.Windows.Forms.TabPage();
 			this.sharesList = new System.Windows.Forms.ListView();
-			this.toolStrip2 = new System.Windows.Forms.ToolStrip();
+			this.sharesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.refreshSharesBtn = new System.Windows.Forms.ToolStripButton();
 			this.xfersTab = new System.Windows.Forms.TabPage();
 			this.xfersList = new System.Windows.Forms.ListView();
-			columnHeader1 = new System.Windows.Forms.ColumnHeader();
-			columnHeader2 = new System.Windows.Forms.ColumnHeader();
-			columnHeader3 = new System.Windows.Forms.ColumnHeader();
+			this.xfersToolStrip = new System.Windows.Forms.ToolStrip();
+			this.clearCompletedXfersButton = new System.Windows.Forms.ToolStripButton();
 			Path = new System.Windows.Forms.ColumnHeader();
 			Vpath = new System.Windows.Forms.ColumnHeader();
 			columnHeader4 = new System.Windows.Forms.ColumnHeader();
@@ -71,26 +71,19 @@ namespace Lanline
 			columnHeader6 = new System.Windows.Forms.ColumnHeader();
 			columnHeader7 = new System.Windows.Forms.ColumnHeader();
 			columnHeader8 = new System.Windows.Forms.ColumnHeader();
+			fileHdr = new System.Windows.Forms.ColumnHeader();
+			percHdr = new System.Windows.Forms.ColumnHeader();
+			hostHdr = new System.Windows.Forms.ColumnHeader();
+			progressHdr = new System.Windows.Forms.ColumnHeader();
 			this.statusStrip1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.hostsPage.SuspendLayout();
-			this.toolStrip1.SuspendLayout();
+			this.netToolStrip.SuspendLayout();
 			this.sharesTab.SuspendLayout();
-			this.toolStrip2.SuspendLayout();
+			this.sharesToolStrip.SuspendLayout();
 			this.xfersTab.SuspendLayout();
+			this.xfersToolStrip.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// columnHeader1
-			// 
-			columnHeader1.Text = "File";
-			// 
-			// columnHeader2
-			// 
-			columnHeader2.Text = "%";
-			// 
-			// columnHeader3
-			// 
-			columnHeader3.Text = "Host";
 			// 
 			// Path
 			// 
@@ -119,6 +112,23 @@ namespace Lanline
 			// columnHeader8
 			// 
 			columnHeader8.Text = "#Files";
+			// 
+			// fileHdr
+			// 
+			fileHdr.Text = "File";
+			// 
+			// percHdr
+			// 
+			percHdr.Text = "%";
+			percHdr.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// hostHdr
+			// 
+			hostHdr.Text = "Host";
+			// 
+			// progressHdr
+			// 
+			progressHdr.Text = "Progress";
 			// 
 			// statusStrip1
 			// 
@@ -150,7 +160,7 @@ namespace Lanline
 			// hostsPage
 			// 
 			this.hostsPage.Controls.Add(this.hostsList);
-			this.hostsPage.Controls.Add(this.toolStrip1);
+			this.hostsPage.Controls.Add(this.netToolStrip);
 			this.hostsPage.Location = new System.Drawing.Point(4, 22);
 			this.hostsPage.Name = "hostsPage";
 			this.hostsPage.Padding = new System.Windows.Forms.Padding(3);
@@ -173,17 +183,17 @@ namespace Lanline
 			this.hostsList.UseCompatibleStateImageBehavior = false;
 			this.hostsList.View = System.Windows.Forms.View.Details;
 			// 
-			// toolStrip1
+			// netToolStrip
 			// 
-			this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.netToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.netToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 									this.addHost,
 									this.discoverBtn});
-			this.toolStrip1.Location = new System.Drawing.Point(3, 3);
-			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(423, 25);
-			this.toolStrip1.TabIndex = 4;
-			this.toolStrip1.Text = "toolStrip1";
+			this.netToolStrip.Location = new System.Drawing.Point(3, 3);
+			this.netToolStrip.Name = "netToolStrip";
+			this.netToolStrip.Size = new System.Drawing.Size(423, 25);
+			this.netToolStrip.TabIndex = 4;
+			this.netToolStrip.Text = "toolStrip1";
 			// 
 			// addHost
 			// 
@@ -206,7 +216,7 @@ namespace Lanline
 			// sharesTab
 			// 
 			this.sharesTab.Controls.Add(this.sharesList);
-			this.sharesTab.Controls.Add(this.toolStrip2);
+			this.sharesTab.Controls.Add(this.sharesToolStrip);
 			this.sharesTab.Location = new System.Drawing.Point(4, 22);
 			this.sharesTab.Name = "sharesTab";
 			this.sharesTab.Padding = new System.Windows.Forms.Padding(3);
@@ -231,19 +241,20 @@ namespace Lanline
 			this.sharesList.UseCompatibleStateImageBehavior = false;
 			this.sharesList.View = System.Windows.Forms.View.Details;
 			this.sharesList.QueryContinueDrag += new System.Windows.Forms.QueryContinueDragEventHandler(this.SharesListQueryContinueDrag);
+			this.sharesList.DoubleClick += new System.EventHandler(this.SharesListDoubleClick);
 			this.sharesList.DragDrop += new System.Windows.Forms.DragEventHandler(this.SharesListDragDrop);
 			this.sharesList.DragEnter += new System.Windows.Forms.DragEventHandler(this.SharesListDragEnter);
 			// 
-			// toolStrip2
+			// sharesToolStrip
 			// 
-			this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.sharesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.sharesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 									this.refreshSharesBtn});
-			this.toolStrip2.Location = new System.Drawing.Point(3, 3);
-			this.toolStrip2.Name = "toolStrip2";
-			this.toolStrip2.Size = new System.Drawing.Size(423, 25);
-			this.toolStrip2.TabIndex = 1;
-			this.toolStrip2.Text = "toolStrip2";
+			this.sharesToolStrip.Location = new System.Drawing.Point(3, 3);
+			this.sharesToolStrip.Name = "sharesToolStrip";
+			this.sharesToolStrip.Size = new System.Drawing.Size(423, 25);
+			this.sharesToolStrip.TabIndex = 1;
+			this.sharesToolStrip.Text = "toolStrip2";
 			// 
 			// refreshSharesBtn
 			// 
@@ -258,10 +269,11 @@ namespace Lanline
 			// xfersTab
 			// 
 			this.xfersTab.Controls.Add(this.xfersList);
+			this.xfersTab.Controls.Add(this.xfersToolStrip);
 			this.xfersTab.Location = new System.Drawing.Point(4, 22);
 			this.xfersTab.Name = "xfersTab";
 			this.xfersTab.Padding = new System.Windows.Forms.Padding(3);
-			this.xfersTab.Size = new System.Drawing.Size(265, 343);
+			this.xfersTab.Size = new System.Drawing.Size(429, 343);
 			this.xfersTab.TabIndex = 2;
 			this.xfersTab.Text = "Xfers";
 			this.xfersTab.UseVisualStyleBackColor = true;
@@ -269,16 +281,37 @@ namespace Lanline
 			// xfersList
 			// 
 			this.xfersList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-									columnHeader1,
-									columnHeader2,
-									columnHeader3});
+									hostHdr,
+									fileHdr,
+									percHdr,
+									progressHdr});
 			this.xfersList.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.xfersList.Location = new System.Drawing.Point(3, 3);
+			this.xfersList.Location = new System.Drawing.Point(3, 28);
 			this.xfersList.Name = "xfersList";
-			this.xfersList.Size = new System.Drawing.Size(259, 337);
-			this.xfersList.TabIndex = 0;
+			this.xfersList.Size = new System.Drawing.Size(423, 312);
+			this.xfersList.TabIndex = 1;
 			this.xfersList.UseCompatibleStateImageBehavior = false;
 			this.xfersList.View = System.Windows.Forms.View.Details;
+			// 
+			// xfersToolStrip
+			// 
+			this.xfersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.xfersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+									this.clearCompletedXfersButton});
+			this.xfersToolStrip.Location = new System.Drawing.Point(3, 3);
+			this.xfersToolStrip.Name = "xfersToolStrip";
+			this.xfersToolStrip.Size = new System.Drawing.Size(423, 25);
+			this.xfersToolStrip.TabIndex = 0;
+			this.xfersToolStrip.Text = "toolStrip3";
+			// 
+			// clearCompletedXfersButton
+			// 
+			this.clearCompletedXfersButton.Image = ((System.Drawing.Image)(resources.GetObject("clearCompletedXfersButton.Image")));
+			this.clearCompletedXfersButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.clearCompletedXfersButton.Name = "clearCompletedXfersButton";
+			this.clearCompletedXfersButton.Size = new System.Drawing.Size(109, 22);
+			this.clearCompletedXfersButton.Text = "Clear Completed";
+			this.clearCompletedXfersButton.Click += new System.EventHandler(this.ClearCompletedXfersButtonClick);
 			// 
 			// MainForm
 			// 
@@ -296,19 +329,25 @@ namespace Lanline
 			this.tabControl1.ResumeLayout(false);
 			this.hostsPage.ResumeLayout(false);
 			this.hostsPage.PerformLayout();
-			this.toolStrip1.ResumeLayout(false);
-			this.toolStrip1.PerformLayout();
+			this.netToolStrip.ResumeLayout(false);
+			this.netToolStrip.PerformLayout();
 			this.sharesTab.ResumeLayout(false);
 			this.sharesTab.PerformLayout();
-			this.toolStrip2.ResumeLayout(false);
-			this.toolStrip2.PerformLayout();
+			this.sharesToolStrip.ResumeLayout(false);
+			this.sharesToolStrip.PerformLayout();
 			this.xfersTab.ResumeLayout(false);
+			this.xfersTab.PerformLayout();
+			this.xfersToolStrip.ResumeLayout(false);
+			this.xfersToolStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.ToolStrip netToolStrip;
+		private System.Windows.Forms.ToolStripButton clearCompletedXfersButton;
+		private System.Windows.Forms.ToolStrip xfersToolStrip;
+		private System.Windows.Forms.ToolStrip sharesToolStrip;
 		private System.Windows.Forms.ToolStripStatusLabel statusLabel;
 		private System.Windows.Forms.ToolStripButton refreshSharesBtn;
-		private System.Windows.Forms.ToolStrip toolStrip2;
 		private System.Windows.Forms.ListView xfersList;
 		private System.Windows.Forms.TabPage xfersTab;
 		private System.Windows.Forms.ListView sharesList;
@@ -319,6 +358,5 @@ namespace Lanline
 		private System.Windows.Forms.ToolStripButton addHost;
 		private System.Windows.Forms.ListView hostsList;
 		private System.Windows.Forms.StatusStrip statusStrip1;
-		private System.Windows.Forms.ToolStrip toolStrip1;
 	}
 }

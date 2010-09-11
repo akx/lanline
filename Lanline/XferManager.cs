@@ -7,6 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections.Generic;
 
 namespace Lanline
 {
@@ -25,12 +26,29 @@ namespace Lanline
 			}
 		}
 		
+		List<Transfer> transfers;
+		
 		public XferManager()
 		{
+			transfers = new List<Transfer>();
 		}
 		
-		public void BeginOutgoingTransfer(ConnectionHandler conn, ShareFileInfo sfi) {
-			
+		public void Track(Transfer tr) {
+			lock(transfers) {
+				if(!transfers.Contains(tr)) transfers.Add(tr);
+			}
 		}
+		
+		public void ClearCompleted() {
+			lock(transfers) {
+				
+			}
+		}
+		
+		public IEnumerable<Transfer> EnumerateTransfers() {
+			foreach(Transfer xfer in transfers) yield return xfer;
+		}
+		
+		
 	}
 }

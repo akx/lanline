@@ -53,8 +53,10 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainServer.cs" />
+    <Compile Include="SharingServer.cs" />
+    <Compile Include="MiscXtns.cs" />
     <Compile Include="NetworkManager.cs" />
+    <Compile Include="OutgoingTransfer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgressWindow.cs" />
     <Compile Include="ProgressWindow.Designer.cs">
@@ -68,6 +70,7 @@
     <Compile Include="ShareManager.cs" />
     <Compile Include="SharePath.cs" />
     <Compile Include="StreamXtns.cs" />
+    <Compile Include="Transfer.cs" />
     <Compile Include="XferManager.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
