@@ -147,6 +147,10 @@ namespace Lanline
 		void DownloadEntireFolderToolStripMenuItemClick(object sender, EventArgs e)
 		{
 			TreeNode node = treeView1.SelectedNode;
+			if(node == null) {
+				MessageBox.Show("No folder selected.");
+				return;
+			}
 			string rootPath = node.Tag as string;
 			int lastSlash = rootPath.LastIndexOf('\\');
 			string rootPathLastPart = (lastSlash == -1 ? rootPath : rootPath.Substring(lastSlash)).Trim('\\');

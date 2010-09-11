@@ -39,6 +39,7 @@ namespace Lanline
 					
 					status = TransferStatus.Busy;
 					if(worker == null) {
+						startedOn = DateTime.Now;
 						worker = new BackgroundWorker();
 						worker.WorkerReportsProgress = true;
 						worker.WorkerSupportsCancellation = true;
@@ -58,10 +59,9 @@ namespace Lanline
 
 		void worker_DoWork(object sender, DoWorkEventArgs e)
 		{
-			Logging.Log("Started download of " + this.file2);
+			Logging.Log("Started download of {0}", this.file2);
 			Uri u = remoteHost.GetURI("/f/" + file1);
 			WebRequest req = WebRequest.Create(u);
-			req.Timeout = 3500;
 			WebResponse resp = req.GetResponse();
 			
 			long total = resp.ContentLength;
@@ -99,7 +99,7 @@ namespace Lanline
 		
 		public override void Cancel()
 		{
-			if(worker != null) worker.CancelAsync();
+			if(worker != null && (status == TransferStatus.Busy || status == TransferStatus.Idle)) worker.CancelAsync();
 		}
 		
 		
