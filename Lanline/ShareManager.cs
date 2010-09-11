@@ -59,6 +59,8 @@ namespace Lanline
 				}
 			}
 			shares.Add(new SharePath(fsPath, vPath));
+			StatusManager.Instance.RaiseFlag(StatusFlag.SharesChanged);
+			SettingsManager.Instance.Save();
 			return true;
 		}
 		
@@ -67,7 +69,15 @@ namespace Lanline
 		}
 		
 		public void RemoveSharePath(SharePath sp) {
-			if(shares.Contains(sp)) shares.Remove(sp);
+			if(shares.Contains(sp)) {
+				shares.Remove(sp);
+				StatusManager.Instance.RaiseFlag(StatusFlag.SharesChanged);
+			}
+		}
+		
+		public void ClearShares() {
+			shares.Clear();
+			StatusManager.Instance.RaiseFlag(StatusFlag.SharesChanged);
 		}
 		
 		public void RefreshShares(RunWorkerCompletedEventHandler onComplete) {
@@ -117,6 +127,7 @@ namespace Lanline
 					break;
 				}
 			}
+			StatusManager.Instance.RaiseFlag(StatusFlag.SharesChanged);
 		}
 		
 		public string[] GetFullVFileList() {

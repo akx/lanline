@@ -25,6 +25,7 @@ namespace Lanline
 		public MainForm()
 		{
 			InitializeComponent();
+			
 			Logging.OnMessageLogged += delegate(string message) { 
 				try {
 					BeginInvoke(new MethodInvoker(delegate { statusLabel.Text = message; }));
@@ -32,9 +33,10 @@ namespace Lanline
 					
 				}
 			};
-			//ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
-			//ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
+			SettingsManager.Instance.Load();
 			SharingServer.Instance.Start();
+			//ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
+			//ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");			
 			//NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
 			
 			DoRefreshShares();
@@ -249,7 +251,9 @@ namespace Lanline
 			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.NetworkChanged)) {
 				RefreshHostsList();
 			}
-			
+			if(StatusManager.Instance.GetAndLowerFlag(StatusFlag.SharesChanged)) {
+				RefreshSharesList();
+			}
 		}
 		
 		void BrowseFilesToolStripMenuItemClick(object sender, EventArgs e)
@@ -289,6 +293,11 @@ namespace Lanline
 			if(dlCount > 0) msg += "\nThere are running downloads.";
 			if(ulCount > 0) msg += "\nThere are running uploads.";
 			e.Cancel = (MessageBox.Show(msg, "Lanline", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No);
+		}
+		
+		void MainFormFormClosed(object sender, FormClosedEventArgs e)
+		{
+			SettingsManager.Instance.Save();
 		}
 	}
 }

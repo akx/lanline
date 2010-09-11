@@ -44,13 +44,16 @@ namespace Lanline
 						worker.WorkerSupportsCancellation = true;
 						worker.DoWork += new DoWorkEventHandler(worker_DoWork);
 						worker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) { 
+							if(e.Error != null) {
+								status = TransferStatus.Error;
+								Logging.LogExceptionToFile(e.Error, "Incoming Transfer " + file2);
+							}
 							worker = null;
 						};
 						worker.RunWorkerAsync();
 					}
 				}
 			}
-			//worker_DoWork(null, null);
 		}
 
 		void worker_DoWork(object sender, DoWorkEventArgs e)

@@ -93,6 +93,7 @@ namespace Lanline
 		public void DoRefreshStep() {
 			if(directoryQueue.Count <= 0) {
 				refreshInProgress = false;
+				StatusManager.Instance.RaiseFlag(StatusFlag.SharesChanged);
 				return;
 			}
 			DirectoryInfo di = directoryQueue.Dequeue();
