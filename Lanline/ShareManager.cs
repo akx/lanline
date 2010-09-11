@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Lanline
 {
@@ -37,12 +38,21 @@ namespace Lanline
 			}
 		}
 		
+		public long TotalBytes {
+			get {
+				long bytes = 0;
+				foreach(SharePath sp in shares) if(sp.Valid) bytes += sp.TotalBytes;
+				return bytes;
+			}
+		}
+		
 		public ShareManager()
 		{
 			shares = new List<SharePath>();
 		}
 		
 		public bool AddPath(string fsPath, string vPath) {
+			vPath = vPath.Replace("/", "_").ToLowerInvariant();
 			foreach(SharePath s in shares) {
 				if(s.VPath == vPath) {
 					return false;
@@ -74,7 +84,9 @@ namespace Lanline
 		void bw_DoWork(object sender, DoWorkEventArgs e)
 		{
 			BackgroundWorker bw = sender as BackgroundWorker;
+			int maxDirsOpen = 0;
 			while(true) {
+				if(bw.CancellationPending) break;
 				bool stepDone = false;
 				int sharesDone = 0;
 				int filesFound = 0;
@@ -90,12 +102,40 @@ namespace Lanline
 						sharesDone ++;
 					}
 				}
+				maxDirsOpen = Math.Max(dirsOpen, maxDirsOpen);
 				string prog = String.Format("{0} files found, {1} directories left to enumerate", filesFound, dirsOpen);
-				bw.ReportProgress((int)((sharesDone / (float)shares.Count) * 100), prog);
+				float leftHere = (maxDirsOpen > 0 ? 1.0f - (dirsOpen / (float)maxDirsOpen) : 0);
+				float progr = (sharesDone / (float)shares.Count) + (leftHere / ((float)shares.Count + 1));
+				if(progr<0) progr=0;
+				if(progr>1) progr=1;
+				bw.ReportProgress((int)(progr * 100), prog);
 				if(!stepDone) {
 					break;
 				}
 			}
 		}
+		
+		public string[] GetFullVFileList() {
+			List<string> files = new List<string>();
+			foreach(SharePath sp in shares) {
+				foreach(ShareFileInfo sfi in sp.EnumerateFiles()) {
+					files.Add(sp.VPath + "\\" + sfi.relativeVPath + "$" + sfi.size.ToString(CultureInfo.InvariantCulture));
+				}
+			}
+			return files.ToArray();
+		}
+		
+		public ShareFileInfo ResolveVPath(string vPath) {
+			string[] vPathParts = vPath.Split(new char[]{'/'}, 2);
+			foreach(SharePath sp in shares) {
+				if(sp.VPath == vPathParts[0]) { // find vpath root {
+					foreach(ShareFileInfo sfi in sp.EnumerateFiles()) {
+						if(sfi.relativeVPath == vPathParts[1]) return sfi;
+					}
+				}
+			}
+			return null;
+		}
+		
 	}
 }

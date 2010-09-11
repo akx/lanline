@@ -27,14 +27,13 @@ namespace Lanline
 			InitializeComponent();
 			Logging.OnMessageLogged += delegate(string message) { 
 				try {
-					BeginInvoke(new MethodInvoker(delegate {
-					    statusLabel.Text = message;	
-					                              }));
+					BeginInvoke(new MethodInvoker(delegate { statusLabel.Text = message; }));
 				} catch(Exception) {
 					
 				}
 			};
 			ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
+			ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");
 			MainServer.Instance.Start();
 			
 			RefreshSharesList();
@@ -95,7 +94,7 @@ namespace Lanline
 		
 		void DoRefreshShares() {
 			ShareManager.Instance.RefreshShares(delegate(object ssender, RunWorkerCompletedEventArgs ea) {
-			                                    	Logging.Log("Share refresh completed. {0} total files.", ShareManager.Instance.TotalFiles);
+			                                    	Logging.Log("Share refresh completed. {0} total files, {1} MiB.", ShareManager.Instance.TotalFiles, ShareManager.Instance.TotalBytes / 1024 / 1024);
 			                                    	BeginInvoke(new MethodInvoker(delegate{RefreshSharesList();}));
 			                                    });
 		}

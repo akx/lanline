@@ -126,7 +126,7 @@ namespace Lanline
 									this.statusLabel});
 			this.statusStrip1.Location = new System.Drawing.Point(0, 369);
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size(273, 22);
+			this.statusStrip1.Size = new System.Drawing.Size(437, 22);
 			this.statusStrip1.TabIndex = 2;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
@@ -144,7 +144,7 @@ namespace Lanline
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(273, 369);
+			this.tabControl1.Size = new System.Drawing.Size(437, 369);
 			this.tabControl1.TabIndex = 3;
 			// 
 			// hostsPage
@@ -154,7 +154,7 @@ namespace Lanline
 			this.hostsPage.Location = new System.Drawing.Point(4, 22);
 			this.hostsPage.Name = "hostsPage";
 			this.hostsPage.Padding = new System.Windows.Forms.Padding(3);
-			this.hostsPage.Size = new System.Drawing.Size(265, 343);
+			this.hostsPage.Size = new System.Drawing.Size(429, 343);
 			this.hostsPage.TabIndex = 0;
 			this.hostsPage.Text = "Network";
 			this.hostsPage.UseVisualStyleBackColor = true;
@@ -168,7 +168,7 @@ namespace Lanline
 			this.hostsList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.hostsList.Location = new System.Drawing.Point(3, 28);
 			this.hostsList.Name = "hostsList";
-			this.hostsList.Size = new System.Drawing.Size(259, 312);
+			this.hostsList.Size = new System.Drawing.Size(423, 312);
 			this.hostsList.TabIndex = 5;
 			this.hostsList.UseCompatibleStateImageBehavior = false;
 			this.hostsList.View = System.Windows.Forms.View.Details;
@@ -181,7 +181,7 @@ namespace Lanline
 									this.discoverBtn});
 			this.toolStrip1.Location = new System.Drawing.Point(3, 3);
 			this.toolStrip1.Name = "toolStrip1";
-			this.toolStrip1.Size = new System.Drawing.Size(259, 25);
+			this.toolStrip1.Size = new System.Drawing.Size(423, 25);
 			this.toolStrip1.TabIndex = 4;
 			this.toolStrip1.Text = "toolStrip1";
 			// 
@@ -210,7 +210,7 @@ namespace Lanline
 			this.sharesTab.Location = new System.Drawing.Point(4, 22);
 			this.sharesTab.Name = "sharesTab";
 			this.sharesTab.Padding = new System.Windows.Forms.Padding(3);
-			this.sharesTab.Size = new System.Drawing.Size(265, 343);
+			this.sharesTab.Size = new System.Drawing.Size(429, 343);
 			this.sharesTab.TabIndex = 1;
 			this.sharesTab.Text = "Shares";
 			this.sharesTab.UseVisualStyleBackColor = true;
@@ -226,7 +226,7 @@ namespace Lanline
 			this.sharesList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.sharesList.Location = new System.Drawing.Point(3, 28);
 			this.sharesList.Name = "sharesList";
-			this.sharesList.Size = new System.Drawing.Size(259, 312);
+			this.sharesList.Size = new System.Drawing.Size(423, 312);
 			this.sharesList.TabIndex = 2;
 			this.sharesList.UseCompatibleStateImageBehavior = false;
 			this.sharesList.View = System.Windows.Forms.View.Details;
@@ -241,7 +241,7 @@ namespace Lanline
 									this.refreshSharesBtn});
 			this.toolStrip2.Location = new System.Drawing.Point(3, 3);
 			this.toolStrip2.Name = "toolStrip2";
-			this.toolStrip2.Size = new System.Drawing.Size(259, 25);
+			this.toolStrip2.Size = new System.Drawing.Size(423, 25);
 			this.toolStrip2.TabIndex = 1;
 			this.toolStrip2.Text = "toolStrip2";
 			// 
@@ -284,7 +284,7 @@ namespace Lanline
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(273, 391);
+			this.ClientSize = new System.Drawing.Size(437, 391);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.statusStrip1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
