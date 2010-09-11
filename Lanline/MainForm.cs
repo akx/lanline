@@ -115,7 +115,7 @@ namespace Lanline
 				   (tr.Direction == TransferDirection.OUTGOING ? "^" : "V") + " " + tr.HostName,
 				   tr.File1,
 				   (tr.HasCompleted ? "Done" : tr.Progress.ToString()),
-				   "|".Repeat((int)(tr.Progress / (100 / 20.0))).PadLeft(20, '.')
+				   "|".Repeat((int)(tr.Progress / (100.0 / 20.0))).PadRight(20, '.')
 		        });
 				lvi.Tag = tr;
 				xfersList.Items.Add(lvi);
