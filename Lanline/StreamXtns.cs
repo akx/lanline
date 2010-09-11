@@ -21,11 +21,6 @@ namespace Lanline
 		public static void WriteUTF8(this Stream stream, string str) {
 			byte[] buf = Encoding.UTF8.GetBytes(str);
 			stream.Write(buf, 0, buf.Length);
-			/*int pieceSize = 2048;
-			for(int i = 0; i < buf.Length; i += pieceSize) {
-				Logging.Log("Writing @ offset {0}", i);
-				stream.Write(buf, i, Math.Min(buf.Length, i + pieceSize));
-			}*/
 		}
 		
 		public static void WriteHTTPResponseHeader(this Stream stream, int code, string contentType, long contentLength) {

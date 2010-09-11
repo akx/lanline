@@ -38,7 +38,8 @@ namespace Lanline
 			//ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
 			//ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");			
 			//NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
-			
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.UserPaint, true);
 			DoRefreshShares();
 			RefreshSharesList();			
 			RefreshXfersList();
@@ -297,6 +298,7 @@ namespace Lanline
 		
 		void MainFormFormClosed(object sender, FormClosedEventArgs e)
 		{
+			XferManager.Instance.StopAndClearAll();
 			SettingsManager.Instance.Save();
 		}
 	}

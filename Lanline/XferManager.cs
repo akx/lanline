@@ -94,5 +94,14 @@ namespace Lanline
 				}
 			}
 		}
+		
+		public void StopAndClearAll() {
+			lock(transfers) {
+				foreach(Transfer trx in transfers) {
+					trx.Cancel();
+				}
+				transfers.Clear();
+			}
+		}
 	}
 }
