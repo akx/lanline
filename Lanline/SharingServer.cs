@@ -18,13 +18,13 @@ namespace Lanline
 	/// <summary>
 	/// Description of MainServer.
 	/// </summary>
-	public class MainServer
+	public class SharingServer
 	{
-		private static MainServer _instance;
+		private static SharingServer _instance;
 
-		public static MainServer Instance {
+		public static SharingServer Instance {
 			get { if(_instance == null) {
-					_instance = new MainServer();
+					_instance = new SharingServer();
 				}
 				return _instance;
 			}
@@ -33,7 +33,7 @@ namespace Lanline
 		TcpListener listener;
 		BackgroundWorker listenerWorker;
 		
-		public MainServer()
+		public SharingServer()
 		{
 			
 		}

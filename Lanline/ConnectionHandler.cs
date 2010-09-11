@@ -74,12 +74,37 @@ namespace Lanline
 				stream.WriteHTTPResponseHeader(200, "text/plain", buf.Length);
         		client.WriteStreamAsHTTPContent(new MemoryStream(buf));
 
+			} else if(path == "/ver") {
+				stream.WriteSimpleHTTPResponse(200, "text/plain", "1");
 			} else if(path.StartsWith("/f/")) {
 				ShareFileInfo sfi = ShareManager.Instance.ResolveVPath(path.Substring(3));
 				if(sfi == null) {
 					stream.WriteSimpleHTTPResponse(404, "text/plain", "Not found!");
 				} else {
-					XferManager.Instance.BeginOutgoingTransfer(this, sfi);
+					OutgoingTransfer transfer = new OutgoingTransfer(this, sfi);
+					XferManager.Instance.Track(transfer);
+					byte[] buffer = new byte[0xfa00];
+					float prog = 0;
+					int throttleCounter = 0;
+					int bytesPerMsec = 1048576;
+					FileInfo fi = new FileInfo(sfi.absoluteFsPath);
+					stream.WriteHTTPResponseHeader(200, "application/octet-stream", fi.Length);
+					Socket sock = client.Client;
+					sock.Send(new byte[]{13, 10});
+					using(FileStream sourceStream = new FileStream(sfi.absoluteFsPath, FileMode.Open)) {
+						while(true) {
+							int bufSize = sourceStream.Read(buffer, 0, buffer.Length);
+	        				if (bufSize == 0) break;
+	        				sock.Send(buffer, bufSize, SocketFlags.None);
+	        				transfer.SetProgress((int)Math.Round(sourceStream.Position / (float) fi.Length) * 100);
+	        				throttleCounter += bufSize;
+	        				while(throttleCounter >= bytesPerMsec) {
+	        					Thread.Sleep(1);
+	        					throttleCounter -= bytesPerMsec;
+	        				}
+						}
+					}
+					transfer.SetIsComplete();
 					/*
 					stream.WriteHTTPResponseHeader(200, "application/octet-stream", sfi.size);
 					using(FileStream fs = new FileStream(sfi.absoluteFsPath, FileMode.Open)) {

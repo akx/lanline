@@ -66,6 +66,10 @@ namespace Lanline
 			foreach(SharePath sp in shares) yield return sp;
 		}
 		
+		public void RemoveSharePath(SharePath sp) {
+			if(shares.Contains(sp)) shares.Remove(sp);
+		}
+		
 		public void RefreshShares(RunWorkerCompletedEventHandler onComplete) {
 			foreach(SharePath sp in shares) {
 				sp.BeginRecache();
