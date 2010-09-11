@@ -12,8 +12,9 @@ using System.Collections.Generic;
 namespace Lanline
 {
 	public enum StatusFlag {
-		NetworkChanged = 1,
-		XfersChanged = 2
+		NetworkChanged,
+		XfersChanged,
+		SharesChanged
 	};
 	
 	

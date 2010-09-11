@@ -42,7 +42,7 @@ namespace Lanline
 			Socket sock = ch.Client.Client;
 			sock.Send(new byte[]{13, 10});
 			status = TransferStatus.Busy;
-			using(FileStream sourceStream = new FileStream(sfi.absoluteFsPath, FileMode.Open)) {
+			using(FileStream sourceStream = new FileStream(sfi.absoluteFsPath, FileMode.Open, FileAccess.Read)) {
 				while(true) {
 					int bufSize = sourceStream.Read(buffer, 0, buffer.Length);
     				if (bufSize == 0) break;

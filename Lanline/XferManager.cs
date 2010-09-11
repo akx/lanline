@@ -45,7 +45,7 @@ namespace Lanline
 		public void ClearCompleted() {
 			lock(transfers) {
 				for(int i = 0; i < transfers.Count; i++) {
-					if(transfers[i].Status == TransferStatus.Completed) {
+					if(transfers[i].Status == TransferStatus.Completed || transfers[i].Status == TransferStatus.Error || transfers[i].Status == TransferStatus.Canceled) {
 						transfers.RemoveAt(i);
 						i--;
 					}

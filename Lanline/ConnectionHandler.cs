@@ -43,6 +43,15 @@ namespace Lanline
 
 		void ConnectionHandler_DoWork(object sender, DoWorkEventArgs e)
 		{
+			try {
+				ConnectionHandler_DoWorkInner(sender, e);
+			} catch(Exception exc) {
+				Logging.LogExceptionToFile(exc, "ConnectionHandler Unhandled Exception");
+			}
+		}
+		
+		void ConnectionHandler_DoWorkInner(object sender, DoWorkEventArgs e)
+		{
 			StreamReader sr = new StreamReader(stream, Encoding.ASCII);
 			string httpVerbLine = sr.ReadLine();
 			string[] parts = httpVerbLine.Split(new char[]{' '}, 3);
@@ -54,10 +63,10 @@ namespace Lanline
 			string path = Uri.UnescapeDataString(parts[1]);// new Uri("http://localhost" + parts[1], true).AbsolutePath;
 			//string path = Uri.UnescapeDataString(parts[1]);
 			// Pretend we're interested in HTTP headers
-			Logging.Log("Path: " + path);
+			//Logging.Log("Path: " + path);
 			while(true) {
 				string line = sr.ReadLine();
-				Logging.Log("  Header: {0}", line.Trim());
+				//Logging.Log("  Header: {0}", line.Trim());
 				if(line.Trim() == "") break;
 			}
 			
@@ -100,7 +109,7 @@ namespace Lanline
 					XferManager.Instance.Track(transfer);
 					try {
 						transfer.RunTransferInThisThread();
-					} catch(Exception exc) {
+					} catch(Exception) {
 						transfer.CancelWithError();
 					}
 				}

@@ -33,11 +33,9 @@ namespace Lanline
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Stop
 				);
-				using(FileStream fs = new FileStream("lanline-exception.txt", FileMode.Append)) {
-					fs.WriteUTF8(ea.Exception.ToString());	
-				}
-				Application.Exit();
+				Logging.LogExceptionToFile(ea.Exception, "Uncaught toplevel exception");
 			};
+			
 			Application.Run(new MainForm());
 			
 		}

@@ -88,7 +88,7 @@ namespace Lanline
 			Refresh();
 			try {
 				host.RequestFileList();
-			} catch(Exception exc) {
+			} catch(Exception) {
 				host.InvalidateFileList();
 				MessageBox.Show("Problem requesting file list.");	
 			}
@@ -134,6 +134,10 @@ namespace Lanline
 				string localDir = SettingsManager.Instance.DefaultDownloadFolder;
 				string remotePath = selectedItem.Tag as string;
 				string localPath = Path.Combine(localDir, Path.GetFileName(remotePath));
+				if(File.Exists(localPath)) {
+					MessageBox.Show("Local file " + localPath + " exists, will not overwrite.");
+					return;
+				}
 				if(MessageBox.Show("Download to " + localPath + "?", "Download", MessageBoxButtons.YesNo) == DialogResult.Yes) {
 					XferManager.Instance.Track(new IncomingTransfer(host, remotePath, localPath));
 				}
@@ -165,8 +169,7 @@ namespace Lanline
 					foreach(string remotePath in files) {
 						string relPath = Path.Combine(rootPathLastPart, remotePath.Substring(rootPath.Length + 1));
 						string localPath = Path.Combine(fbd.SelectedPath, relPath);
-						System.Diagnostics.Debug.Print(localPath);
-						XferManager.Instance.Track(new IncomingTransfer(host, remotePath, localPath));
+						if(!File.Exists(localPath)) XferManager.Instance.Track(new IncomingTransfer(host, remotePath, localPath));
 					}
 				}
 			}

@@ -297,8 +297,8 @@ namespace Lanline
 			this.reverifyHostsBtn.Image = ((System.Drawing.Image)(resources.GetObject("reverifyHostsBtn.Image")));
 			this.reverifyHostsBtn.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.reverifyHostsBtn.Name = "reverifyHostsBtn";
-			this.reverifyHostsBtn.Size = new System.Drawing.Size(113, 22);
-			this.reverifyHostsBtn.Text = "Reverify Known Hosts";
+			this.reverifyHostsBtn.Size = new System.Drawing.Size(114, 22);
+			this.reverifyHostsBtn.Text = "Recheck Known Hosts";
 			this.reverifyHostsBtn.Click += new System.EventHandler(this.ReverifyHostsBtnClick);
 			// 
 			// sharesTab
@@ -464,8 +464,10 @@ namespace Lanline
 			this.Controls.Add(this.statusStrip1);
 			this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+			this.MinimumSize = new System.Drawing.Size(450, 450);
 			this.Name = "MainForm";
 			this.Text = "Lanline";
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainFormFormClosed);
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
 			this.statusStrip1.ResumeLayout(false);
 			this.statusStrip1.PerformLayout();
