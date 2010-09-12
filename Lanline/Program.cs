@@ -24,22 +24,29 @@ namespace Lanline
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-			Application.ThreadException += delegate(object sender, ThreadExceptionEventArgs ea) {
-				MessageBox.Show(
+			try {
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
+				//Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+				Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+				Application.Run(new MainForm());
+			} catch(Exception exc) {
+				Logging.LogExceptionToFile(exc, "Toplevel fail");
+				throw exc;
+			}
+		}
+
+		static void Application_ThreadException(object sender, ThreadExceptionEventArgs ea)
+		{
+			MessageBox.Show(
 					"An unhandled exception happened. :(\nDetails:\n\n" + ea.Exception.ToString()+"\n\nSaving this to lanline-exception.txt.",
 					"Exception :(",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Stop
 				);
-				Logging.LogExceptionToFile(ea.Exception, "Uncaught toplevel exception");
-			};
-			
-			Application.Run(new MainForm());
-			
+			Logging.LogExceptionToFile(ea.Exception, "Uncaught toplevel exception");
 		}
+		
 		
 	}
 }
