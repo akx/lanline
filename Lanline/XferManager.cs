@@ -28,11 +28,20 @@ namespace Lanline
 		}
 		
 		List<Transfer> transfers;
+		XferViewManager viewManager;
+		
+		public XferViewManager ViewManager {
+			get { return viewManager; }
+		}
+		
 		
 		public XferManager()
 		{
 			transfers = new List<Transfer>();
+			viewManager = new XferViewManager();
 		}
+		
+		
 		
 		public bool CanDownloadToLocalFile(string localPath) {
 			localPath = Path.GetFullPath(localPath);
@@ -48,7 +57,9 @@ namespace Lanline
 			lock(transfers) {
 				if(!transfers.Contains(tr)) {
 					transfers.Add(tr);
+					viewManager.Add(tr);
 					StatusManager.Instance.RaiseFlag(StatusFlag.XfersChanged);
+					
 				}
 			}
 		}
@@ -57,7 +68,9 @@ namespace Lanline
 			lock(transfers) {
 				for(int i = 0; i < transfers.Count; i++) {
 					if(transfers[i].Status == TransferStatus.Completed || transfers[i].Status == TransferStatus.Error || transfers[i].Status == TransferStatus.Canceled) {
+						viewManager.Remove(transfers[i]);
 						transfers.RemoveAt(i);
+						
 						i--;
 					}
 				}
@@ -113,6 +126,7 @@ namespace Lanline
 					if(trx.Status == TransferStatus.Busy) trx.Cancel();
 				}
 				transfers.Clear();
+				viewManager.Clear();
 			}
 		}
 	}
