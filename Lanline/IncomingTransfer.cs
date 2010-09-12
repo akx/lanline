@@ -77,6 +77,7 @@ namespace Lanline
 			Logging.Log("Started download of {0}", this.file2);
 			Uri u = remoteHost.GetURI("/f/" + file1);
 			WebRequest req = WebRequest.Create(u);
+			req.Timeout = 90000;
 			WebResponse resp = req.GetResponse();
 			
 			long total = resp.ContentLength;
@@ -98,6 +99,7 @@ namespace Lanline
 					SetProgressAndBytes(received, total);
 					//SetProgress((received / (float)total) * 100);
 				}
+				outStream.Close();
 			}
 			if(received < total) {
 				Logging.Log("Only got {0} bytes of {1} expected, error. :(", received, total);

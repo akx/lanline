@@ -32,27 +32,29 @@ namespace Lanline
 		}
 		
 		public void RunTransferInThisThread() {
+			status = TransferStatus.Busy;
 			byte[] buffer = new byte[524288];
 			//float prog = 0;
 			int writtenTotal = 0;
-			//int throttleCounter = 0;
-			//int bytesPerMsec = 1048576;
+			int throttleCounter = 0;
+			int throttlePeriod = 300000;
+			int throttleTime = 1;
 			FileInfo fi = new FileInfo(sfi.absoluteFsPath);
 			ch.Stream.WriteHTTPResponseHeader(200, "application/octet-stream", fi.Length);
 			Socket sock = ch.Client.Client;
 			sock.Send(new byte[]{13, 10});
-			status = TransferStatus.Busy;
+			
 			using(FileStream sourceStream = new FileStream(sfi.absoluteFsPath, FileMode.Open, FileAccess.Read)) {
 				while(true) {
 					int bufSize = sourceStream.Read(buffer, 0, buffer.Length);
     				if (bufSize == 0) break;
     				writtenTotal += sock.Send(buffer, bufSize, SocketFlags.None);
     				SetProgressAndBytes(writtenTotal, fi.Length);
-    				/*throttleCounter += bufSize;
-    				while(throttleCounter >= bytesPerMsec) {
-    					Thread.Sleep(1);
-    					throttleCounter -= bytesPerMsec;
-    				}*/
+    				throttleCounter += bufSize;
+    				while(throttleCounter >= throttlePeriod) {
+    					Thread.Sleep(throttleTime);
+    					throttleCounter -= throttlePeriod;
+    				}
 				}
 			}
 			SetIsComplete();

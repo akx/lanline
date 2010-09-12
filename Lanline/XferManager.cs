@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lanline
 {
@@ -31,6 +32,16 @@ namespace Lanline
 		public XferManager()
 		{
 			transfers = new List<Transfer>();
+		}
+		
+		public bool CanDownloadToLocalFile(string localPath) {
+			localPath = Path.GetFullPath(localPath);
+			if(File.Exists(localPath)) return false;
+			
+			for(int i = 0; i < transfers.Count; i++) {
+				if(transfers[i].Direction == TransferDirection.In && Path.GetFullPath(transfers[i].File2) == localPath) return false;
+			}
+			return true;
 		}
 		
 		public void Track(Transfer tr) {
