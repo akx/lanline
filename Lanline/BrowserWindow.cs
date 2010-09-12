@@ -135,8 +135,8 @@ namespace Lanline
 				string localDir = SettingsManager.Instance.DefaultDownloadFolder;
 				string remotePath = selectedItem.Tag as string;
 				string localPath = Path.Combine(localDir, Path.GetFileName(remotePath));
-				if(File.Exists(localPath)) {
-					MessageBox.Show("Local file " + localPath + " exists, will not overwrite.");
+				if(!XferManager.Instance.CanDownloadToLocalFile(localPath)) {
+					MessageBox.Show("Local file " + localPath + " exists or is already in download list, will not overwrite.");
 					return;
 				}
 				if(MessageBox.Show("Download to " + localPath + "?", "Download", MessageBoxButtons.YesNo) == DialogResult.Yes) {
@@ -174,7 +174,7 @@ namespace Lanline
 					foreach(string remotePath in files) {
 						string relPath = Path.Combine(rootPathLastPart, remotePath.Substring(rootPath.Length + 1));
 						string localPath = Path.Combine(fbd.SelectedPath, relPath);
-						if(!File.Exists(localPath)) XferManager.Instance.Track(new IncomingTransfer(host, remotePath, localPath));
+						if(XferManager.Instance.CanDownloadToLocalFile(localPath)) XferManager.Instance.Track(new IncomingTransfer(host, remotePath, localPath));
 					}
 				}
 			}

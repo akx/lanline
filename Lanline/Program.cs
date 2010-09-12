@@ -8,6 +8,7 @@
  */
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -22,8 +23,18 @@ namespace Lanline
 		/// Program entry point.
 		/// </summary>
 		[STAThread]
+		[MethodImpl(MethodImplOptions.NoInlining)]
 		private static void Main(string[] args)
 		{
+			try {
+				Run();
+			} catch(Exception exc) {
+				MessageBox.Show("Error. :(\n\n" + exc.ToString());
+			}
+		}
+		
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		static void Run() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			/*
