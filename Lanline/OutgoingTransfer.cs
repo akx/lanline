@@ -32,7 +32,7 @@ namespace Lanline
 		}
 		
 		public void RunTransferInThisThread() {
-			byte[] buffer = new byte[262144];
+			byte[] buffer = new byte[524288];
 			//float prog = 0;
 			int writtenTotal = 0;
 			//int throttleCounter = 0;

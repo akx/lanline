@@ -30,6 +30,7 @@ namespace Lanline
 		
 		public static void Debug(string fmt, params object[] args) {
 			string msg = (args.Length == 0 ? fmt : String.Format(fmt, args));
+			Console.Out.WriteLine("<Debug> " + msg);
 			System.Diagnostics.Debug.Print("Debug: " + msg);
 		}
 		

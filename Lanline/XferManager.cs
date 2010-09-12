@@ -82,9 +82,10 @@ namespace Lanline
 		public void StartQueuedConnections() {
 			int quota = 5 - GetRunningDownloadCount();
 			
-			Logging.Debug("Available download slots: {0}", quota);
+			//Logging.Debug("Available download slots: {0}", quota);
 			if(quota <= 0) return;
-			foreach(Transfer xfer in transfers) {
+			for(int i = 0; i < transfers.Count; i++) {
+				Transfer xfer = transfers[i];
 				if(xfer.Direction == TransferDirection.In && xfer.Status == TransferStatus.Idle) {
 					//Logging.Debug("XferManager starting idle download {0}", xfer);
 					(xfer as IncomingTransfer).Start();
@@ -98,7 +99,7 @@ namespace Lanline
 		public void StopAndClearAll() {
 			lock(transfers) {
 				foreach(Transfer trx in transfers) {
-					trx.Cancel();
+					if(trx.Status == TransferStatus.Busy) trx.Cancel();
 				}
 				transfers.Clear();
 			}
