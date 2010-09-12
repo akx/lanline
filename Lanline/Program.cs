@@ -26,6 +26,7 @@ namespace Lanline
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
+			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			Application.ThreadException += delegate(object sender, ThreadExceptionEventArgs ea) {
 				MessageBox.Show(
 					"An unhandled exception happened. :(\nDetails:\n\n" + ea.Exception.ToString()+"\n\nSaving this to lanline-exception.txt.",

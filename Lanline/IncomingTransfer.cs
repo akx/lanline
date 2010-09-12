@@ -75,16 +75,21 @@ namespace Lanline
 						break;
 					}
 					int read = inStream.Read(buffer, 0, buffer.Length);
-					if(read == 0) break;
 					received += read;
+					if(read == 0) break;
+					
 					//System.Diagnostics.Debug.Print("Received {0} bytes", received);
 					outStream.Write(buffer, 0, read);
 					SetProgressAndBytes(received, total);
 					//SetProgress((received / (float)total) * 100);
 				}
 			}
+			if(received < total) {
+				Logging.Log("Only got {0} bytes of {1} expected, error. :(", received, total);
+				status = TransferStatus.Error;
+			}
 			Logging.Debug("Finished download of {0}.", tempFileName);
-			if(worker.CancellationPending) {
+			if(worker.CancellationPending || status == TransferStatus.Canceled || status == TransferStatus.Error) {
 				if(File.Exists(tempFileName)) {
 					Logging.Log("Deleting temporary file {0} when canceling transfer", tempFileName);
 					File.Delete(tempFileName);
