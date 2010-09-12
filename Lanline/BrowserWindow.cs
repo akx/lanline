@@ -32,6 +32,7 @@ namespace Lanline
 			this.host = host;
 			Text = string.Format("Browser: {0} ({1})", host.Ip, host.Name);
 			//if(!host.HasFileList) RefreshFileListBtnClick(null, null);
+			if(host.HasFileList) RefreshTree();
 		}
 		
 		void RefreshTree() {

@@ -33,13 +33,18 @@ namespace Lanline
 					
 				}
 			};
-			SettingsManager.Instance.Load();
+			try {
+				SettingsManager.Instance.Load();
+			} catch(Exception e) {
+				Logging.LogExceptionToFile(e, "Setting load");
+				MessageBox.Show("Oops! There was a problem loading the settings file. Reverting to defaults.");
+			}
 			SharingServer.Instance.Start();
 			//ShareManager.Instance.AddPath("u:\\Shareable", "Shareable");
 			//ShareManager.Instance.AddPath("c:\\Users\\Aarni\\My Documents\\My Music", "Music");			
 			//NetworkManager.Instance.AddHost("127.0.0.1", NetworkManager.LANLINE_PORT, true);
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.UserPaint, true);
+			//SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			//SetStyle(ControlStyles.UserPaint, true);
 			DoRefreshShares();
 			RefreshSharesList();			
 			RefreshXfersList();
@@ -83,6 +88,7 @@ namespace Lanline
 				lvi.Tag = sp;
 				sharesList.Items.Add(lvi);
 			}
+			sharesTab.Text = String.Format("Shares ({0})", ShareManager.Instance.TotalFiles);
 			sharesList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 		}
 		
@@ -298,7 +304,11 @@ namespace Lanline
 		
 		void MainFormFormClosed(object sender, FormClosedEventArgs e)
 		{
-			XferManager.Instance.StopAndClearAll();
+			try {
+				XferManager.Instance.StopAndClearAll();
+			} catch(Exception) {
+				
+			}
 			SettingsManager.Instance.Save();
 		}
 	}
