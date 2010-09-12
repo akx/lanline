@@ -43,7 +43,7 @@ namespace Lanline
 			ch.Stream.WriteHTTPResponseHeader(200, "application/octet-stream", fi.Length);
 			Socket sock = ch.Client.Client;
 			sock.Send(new byte[]{13, 10});
-			
+			startedOn = DateTime.Now;
 			using(FileStream sourceStream = new FileStream(sfi.absoluteFsPath, FileMode.Open, FileAccess.Read)) {
 				while(true) {
 					int bufSize = sourceStream.Read(buffer, 0, buffer.Length);

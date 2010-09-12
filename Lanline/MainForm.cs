@@ -127,9 +127,9 @@ namespace Lanline
 			List<ListViewItem> done = new List<ListViewItem>();
 			foreach(Transfer tr in XferManager.Instance.EnumerateTransfers()) {
 				if(doUpdateList) {
-					int progBars = (int)Math.Ceiling((tr.Status == TransferStatus.Completed ? 100 : tr.Progress) / 5.0);
+					int progBars = (int)Math.Ceiling((tr.Status == TransferStatus.Completed ? 100 : tr.Progress) / 100.0 * 20);
 					ListViewItem lvi = new ListViewItem(new string[]{
-						(tr.Direction == TransferDirection.Out ? "^" : "V") + " " + tr.HostName,
+						tr.HostName,
 						tr.File1,
 						tr.GetProgString(),
 						(tr.Status == TransferStatus.Busy ? "|".Repeat(progBars).PadRight(20, '.') : ""),

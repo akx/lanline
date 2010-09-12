@@ -82,6 +82,7 @@
     <Compile Include="StreamXtns.cs" />
     <Compile Include="Transfer.cs" />
     <Compile Include="XferManager.cs" />
+    <Compile Include="XferViewManager.cs" />
     <EmbeddedResource Include="BrowserWindow.resx">
       <DependentUpon>BrowserWindow.cs</DependentUpon>
     </EmbeddedResource>
