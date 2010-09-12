@@ -115,29 +115,55 @@ namespace Lanline
 		}
 		
 		void RefreshXfersList() {
-			xfersList.BeginUpdate();
-			xfersList.Items.Clear();
+			bool doUpdateList = (tabControl1.SelectedTab == xfersTab);
 			int nUp = 0, nDown = 0, nQueued = 0;
+			if(doUpdateList) {
+				xfersList.BeginUpdate();
+				xfersList.Items.Clear();
+			}
+				
+			List<ListViewItem> busy = new List<ListViewItem>();
+			List<ListViewItem> queued = new List<ListViewItem>();
+			List<ListViewItem> done = new List<ListViewItem>();
 			foreach(Transfer tr in XferManager.Instance.EnumerateTransfers()) {
-				int progBars = (int)Math.Round((tr.Status == TransferStatus.Completed ? 100 : tr.Progress) / 5.0);
-				ListViewItem lvi = new ListViewItem(new string[]{
-					(tr.Direction == TransferDirection.Out ? "^" : "V") + " " + tr.HostName,
-					tr.File1,
-					tr.GetProgString(),
-					(tr.Status == TransferStatus.Busy ? "|".Repeat(progBars).PadRight(20, '.') : ""),
-					tr.Direction.ToString(),
-					tr.Status.ToString(),
-					Math.Round(tr.GetAverageSpeed(), 1) + "K/s"
-				});
-				lvi.Tag = tr;
-				xfersList.Items.Add(lvi);
+				if(doUpdateList) {
+					int progBars = (int)Math.Ceiling((tr.Status == TransferStatus.Completed ? 100 : tr.Progress) / 5.0);
+					ListViewItem lvi = new ListViewItem(new string[]{
+						(tr.Direction == TransferDirection.Out ? "^" : "V") + " " + tr.HostName,
+						tr.File1,
+						tr.GetProgString(),
+						(tr.Status == TransferStatus.Busy ? "|".Repeat(progBars).PadRight(20, '.') : ""),
+						tr.Direction.ToString(),
+						tr.Status.ToString(),
+						Math.Round(tr.GetAverageSpeed(), 1) + "K/s"
+					});
+					lvi.Tag = tr;
+					if(tr.Status == TransferStatus.Busy) {
+						busy.Add(lvi);
+						lvi.ForeColor = Color.FromArgb(255, 0, 0, (int)(tr.Progress * 2));
+					}
+					else if(tr.Status == TransferStatus.Completed) {
+						done.Add(lvi);
+						lvi.ForeColor = Color.Green;
+					}
+					else {
+						queued.Add(lvi);
+						lvi.ForeColor = Color.Gray;
+					}
+					if(tr.Status == TransferStatus.Error) lvi.ForeColor = Color.Red;
+				}
 				if(tr.Direction == TransferDirection.Out && tr.Status == TransferStatus.Busy) nUp++;
 				if(tr.Direction == TransferDirection.In) {
 					if(tr.Status == TransferStatus.Busy) nDown ++;
 					if(tr.Status == TransferStatus.Idle) nQueued ++;
 				}				
 			}
-			xfersList.EndUpdate();
+			if(doUpdateList) {
+				foreach(ListViewItem lvi in busy) xfersList.Items.Add(lvi);
+				foreach(ListViewItem lvi in queued) xfersList.Items.Add(lvi);
+				foreach(ListViewItem lvi in done) xfersList.Items.Add(lvi);
+				xfersList.EndUpdate();
+			}
 			xfersTab.Text = String.Format("Xfers ({0}/{1} dn, {2} up)", nDown, nQueued, nUp);
 		}
 		

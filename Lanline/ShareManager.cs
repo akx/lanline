@@ -60,7 +60,6 @@ namespace Lanline
 			}
 			shares.Add(new SharePath(fsPath, vPath));
 			StatusManager.Instance.RaiseFlag(StatusFlag.SharesChanged);
-			SettingsManager.Instance.Save();
 			return true;
 		}
 		

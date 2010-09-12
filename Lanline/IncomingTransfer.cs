@@ -18,8 +18,10 @@ namespace Lanline
 	/// </summary>
 	public class IncomingTransfer: Transfer
 	{
+		static Random rng = new Random();
 		BackgroundWorker worker;
 		string tempFileName;
+		
 		
 		public IncomingTransfer(Host h, string vpath, string localPath)
 		{
@@ -28,9 +30,8 @@ namespace Lanline
 			this.hostName = h.Ip;
 			this.file1 = vpath;
 			this.file2 = localPath;
-			tempFileName = file2 + ".ll-" + (DateTime.Now.Ticks % 9999).ToString();
-			string dirName = Path.GetDirectoryName(localPath);
-			if(!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+			tempFileName = file2 + ".ll-" + (rng.Next(0, 9999)).ToString();
+			
 		}
 		
 		public void Start() {
@@ -49,7 +50,7 @@ namespace Lanline
 								status = TransferStatus.Error;
 								Logging.LogExceptionToFile(e.Error, "Incoming Transfer " + file2);
 							}
-							worker = null;
+							this.worker = null;
 						};
 						worker.RunWorkerAsync();
 					}
@@ -59,6 +60,20 @@ namespace Lanline
 
 		void worker_DoWork(object sender, DoWorkEventArgs e)
 		{
+			try {
+				worker_DoWorkInner();
+			} catch(Exception exc) {
+				status = TransferStatus.Error;
+				Logging.LogExceptionToFile(exc, "IncomingTransfer Wrapper");
+				DeleteTemporary();
+			}
+			StatusManager.Instance.RaiseFlag(StatusFlag.XfersChanged);
+			
+		}
+		void worker_DoWorkInner() {
+			string dirName = Path.GetDirectoryName(localPath);
+			if(!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+			
 			Logging.Log("Started download of {0}", this.file2);
 			Uri u = remoteHost.GetURI("/f/" + file1);
 			WebRequest req = WebRequest.Create(u);
@@ -67,9 +82,9 @@ namespace Lanline
 			long total = resp.ContentLength;
 			long received = 0;
 			Stream inStream = resp.GetResponseStream();
-			byte[] buffer = new byte[262144];
+			byte[] buffer = new byte[1024 * 1024];
 			Logging.Debug("Starting download of {0}, expecting {1} bytes.", tempFileName, total);
-			using(FileStream outStream = new FileStream(tempFileName, FileMode.CreateNew)) {
+			using(FileStream outStream = new FileStream(tempFileName, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) {
 				while(true) {
 					if(worker.CancellationPending) {
 						break;
@@ -86,14 +101,13 @@ namespace Lanline
 			}
 			if(received < total) {
 				Logging.Log("Only got {0} bytes of {1} expected, error. :(", received, total);
+				DeleteTemporary();
 				status = TransferStatus.Error;
+				return;
 			}
 			Logging.Debug("Finished download of {0}.", tempFileName);
 			if(worker.CancellationPending || status == TransferStatus.Canceled || status == TransferStatus.Error) {
-				if(File.Exists(tempFileName)) {
-					Logging.Log("Deleting temporary file {0} when canceling transfer", tempFileName);
-					File.Delete(tempFileName);
-				}
+				DeleteTemporary();
 				status = TransferStatus.Canceled;
 			} else {
 				File.Move(tempFileName, file2);
@@ -101,10 +115,16 @@ namespace Lanline
 			}
 		}
 		
+		void DeleteTemporary() {
+			if(!String.IsNullOrEmpty(tempFileName) && File.Exists(tempFileName)) {
+				Logging.Log("Deleting temporary file {0} when canceling transfer", tempFileName);
+				File.Delete(tempFileName);
+			}
+		}
 		
 		public override void Cancel()
 		{
-			if(worker != null && (status == TransferStatus.Busy || status == TransferStatus.Idle)) worker.CancelAsync();
+			if(worker != null && status == TransferStatus.Busy) worker.CancelAsync();
 		}
 		
 		

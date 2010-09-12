@@ -24,27 +24,38 @@ namespace Lanline
 		[STAThread]
 		private static void Main(string[] args)
 		{
-			try {
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
-				//Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-				Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
-				Application.Run(new MainForm());
-			} catch(Exception exc) {
-				Logging.LogExceptionToFile(exc, "Toplevel fail");
-				throw exc;
-			}
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			/*
+			 * Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomain_CurrentDomain_UnhandledException);
+			Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
+			*/
+			Application.Run(new MainForm());
+			
+		}
+
+		static void AppDomain_CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs ea)
+		{
+			Logging.LogExceptionToFile(ea.ExceptionObject as Exception, "Uncaught application exception");
+			MessageBox.Show(
+					"An unhandled exception happened. :(\nDetails:\n\n" + ea.ExceptionObject.ToString()+"\n\nSaving this to lanline-exception.txt.",
+					"Exception :(",
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Stop
+			);
 		}
 
 		static void Application_ThreadException(object sender, ThreadExceptionEventArgs ea)
 		{
+			Logging.LogExceptionToFile(ea.Exception, "Uncaught toplevel exception");
 			MessageBox.Show(
 					"An unhandled exception happened. :(\nDetails:\n\n" + ea.Exception.ToString()+"\n\nSaving this to lanline-exception.txt.",
 					"Exception :(",
 					MessageBoxButtons.OK,
 					MessageBoxIcon.Stop
 				);
-			Logging.LogExceptionToFile(ea.Exception, "Uncaught toplevel exception");
+			
 		}
 		
 		

@@ -198,6 +198,7 @@ namespace Lanline
 			this.tabControl1.Controls.Add(this.settingsTab);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
+			this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(643, 429);
@@ -210,7 +211,6 @@ namespace Lanline
 			this.hostsPage.Controls.Add(this.netToolStrip);
 			this.hostsPage.Location = new System.Drawing.Point(4, 24);
 			this.hostsPage.Name = "hostsPage";
-			this.hostsPage.Padding = new System.Windows.Forms.Padding(3);
 			this.hostsPage.Size = new System.Drawing.Size(635, 401);
 			this.hostsPage.TabIndex = 0;
 			this.hostsPage.Text = "Network";
@@ -228,9 +228,10 @@ namespace Lanline
 			this.hostsList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.hostsList.FullRowSelect = true;
 			this.hostsList.GridLines = true;
-			this.hostsList.Location = new System.Drawing.Point(3, 28);
+			this.hostsList.Location = new System.Drawing.Point(0, 25);
+			this.hostsList.Margin = new System.Windows.Forms.Padding(0);
 			this.hostsList.Name = "hostsList";
-			this.hostsList.Size = new System.Drawing.Size(629, 370);
+			this.hostsList.Size = new System.Drawing.Size(635, 376);
 			this.hostsList.TabIndex = 5;
 			this.hostsList.UseCompatibleStateImageBehavior = false;
 			this.hostsList.View = System.Windows.Forms.View.Details;
@@ -265,9 +266,9 @@ namespace Lanline
 									this.addHostBtn,
 									this.discoverBtn,
 									this.reverifyHostsBtn});
-			this.netToolStrip.Location = new System.Drawing.Point(3, 3);
+			this.netToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.netToolStrip.Name = "netToolStrip";
-			this.netToolStrip.Size = new System.Drawing.Size(629, 25);
+			this.netToolStrip.Size = new System.Drawing.Size(635, 25);
 			this.netToolStrip.TabIndex = 4;
 			this.netToolStrip.Text = "toolStrip1";
 			// 
@@ -307,7 +308,6 @@ namespace Lanline
 			this.sharesTab.Controls.Add(this.sharesToolStrip);
 			this.sharesTab.Location = new System.Drawing.Point(4, 24);
 			this.sharesTab.Name = "sharesTab";
-			this.sharesTab.Padding = new System.Windows.Forms.Padding(3);
 			this.sharesTab.Size = new System.Drawing.Size(635, 401);
 			this.sharesTab.TabIndex = 1;
 			this.sharesTab.Text = "Shares";
@@ -324,9 +324,9 @@ namespace Lanline
 			this.sharesList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.sharesList.FullRowSelect = true;
 			this.sharesList.GridLines = true;
-			this.sharesList.Location = new System.Drawing.Point(3, 28);
+			this.sharesList.Location = new System.Drawing.Point(0, 25);
 			this.sharesList.Name = "sharesList";
-			this.sharesList.Size = new System.Drawing.Size(629, 370);
+			this.sharesList.Size = new System.Drawing.Size(635, 376);
 			this.sharesList.TabIndex = 2;
 			this.sharesList.UseCompatibleStateImageBehavior = false;
 			this.sharesList.View = System.Windows.Forms.View.Details;
@@ -340,9 +340,9 @@ namespace Lanline
 			this.sharesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.sharesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 									this.refreshSharesBtn});
-			this.sharesToolStrip.Location = new System.Drawing.Point(3, 3);
+			this.sharesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.sharesToolStrip.Name = "sharesToolStrip";
-			this.sharesToolStrip.Size = new System.Drawing.Size(629, 25);
+			this.sharesToolStrip.Size = new System.Drawing.Size(635, 25);
 			this.sharesToolStrip.TabIndex = 1;
 			this.sharesToolStrip.Text = "toolStrip2";
 			// 
@@ -362,7 +362,6 @@ namespace Lanline
 			this.xfersTab.Controls.Add(this.xfersToolStrip);
 			this.xfersTab.Location = new System.Drawing.Point(4, 24);
 			this.xfersTab.Name = "xfersTab";
-			this.xfersTab.Padding = new System.Windows.Forms.Padding(3);
 			this.xfersTab.Size = new System.Drawing.Size(635, 401);
 			this.xfersTab.TabIndex = 2;
 			this.xfersTab.Text = "Xfers";
@@ -382,9 +381,9 @@ namespace Lanline
 			this.xfersList.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.xfersList.FullRowSelect = true;
 			this.xfersList.GridLines = true;
-			this.xfersList.Location = new System.Drawing.Point(3, 28);
+			this.xfersList.Location = new System.Drawing.Point(0, 25);
 			this.xfersList.Name = "xfersList";
-			this.xfersList.Size = new System.Drawing.Size(629, 370);
+			this.xfersList.Size = new System.Drawing.Size(635, 376);
 			this.xfersList.TabIndex = 1;
 			this.xfersList.UseCompatibleStateImageBehavior = false;
 			this.xfersList.View = System.Windows.Forms.View.Details;
@@ -394,9 +393,9 @@ namespace Lanline
 			this.xfersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
 			this.xfersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 									this.clearCompletedXfersButton});
-			this.xfersToolStrip.Location = new System.Drawing.Point(3, 3);
+			this.xfersToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.xfersToolStrip.Name = "xfersToolStrip";
-			this.xfersToolStrip.Size = new System.Drawing.Size(629, 25);
+			this.xfersToolStrip.Size = new System.Drawing.Size(635, 25);
 			this.xfersToolStrip.TabIndex = 0;
 			this.xfersToolStrip.Text = "toolStrip3";
 			// 
@@ -462,6 +461,7 @@ namespace Lanline
 			this.ClientSize = new System.Drawing.Size(643, 451);
 			this.Controls.Add(this.tabControl1);
 			this.Controls.Add(this.statusStrip1);
+			this.DoubleBuffered = true;
 			this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
 			this.MinimumSize = new System.Drawing.Size(450, 450);
