@@ -80,7 +80,7 @@ namespace Lanline
 			try {
 				
 				Logging.Debug("Saving configuration {0}.", filename);
-				using(FileStream settingsFs = new FileStream(filename, FileMode.OpenOrCreate)) {
+				using(FileStream settingsFs = new FileStream(filename, FileMode.OpenOrCreate | FileMode.Truncate)) {
 					settingsFs.WriteUTF8(settingsSb.ToString());
 				}
 			} catch(Exception) {

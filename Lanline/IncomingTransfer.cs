@@ -71,7 +71,7 @@ namespace Lanline
 			
 		}
 		void worker_DoWorkInner() {
-			string dirName = Path.GetDirectoryName(localPath);
+			string dirName = Path.GetDirectoryName(file2);
 			if(!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
 			
 			Logging.Log("Started download of {0}", this.file2);
